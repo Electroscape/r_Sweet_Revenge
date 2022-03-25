@@ -1,2 +1,7 @@
 # r_Sweet_Revenge
-Software used in the sweet revenge
+Repository of the room Sweet Revenge
+
+## Content
+This repository contains the Arduino and Python code for the following riddles
+- Carls Office
+  - An interface with a login

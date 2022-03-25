@@ -1,0 +1,61 @@
+{
+    "general": {
+        "password": "12091973",
+        "exit_password": "20162016",
+        "img_path": {
+            "all": "../img/",
+            "hh": "../img/hh/",
+            "s": "../img/s/"
+        }
+    },
+    "tkinter": {
+        "background-color": "#F2F2F2",
+        "tabpadx": 50
+    },
+    "text": {
+        "dropdown": {
+            "deu": "- Auswahl -",
+            "eng": "- select -"
+        },
+        "login": {
+            "username": {
+                "deu": "Name",
+                "eng": "name"
+            },
+            "password": {
+                "deu": "Passwort",
+                "eng": "password"
+            }
+        },
+        "password_wrong": {
+            "title": {
+                "deu": "Fehler",
+                "eng": "Error"
+            },
+            "text": {
+                "deu": "Falsches Passwort. Bitte erneut eingeben.",
+                "eng": "Wrong password. Please try again."
+            }
+        },
+        "password_hint": {
+            "title": {
+                "deu": "Hilfe",
+                "eng": "Help"
+            },
+            "text": {
+                "deu": "Geburtstag, Schatz",
+                "eng": "Birthday, darling"
+            }
+        },
+        "button": {
+            "login": {
+                "deu": "Login",
+                "eng": "Login"
+            },
+            "pw_hint": {
+                "deu": "Passwort vergessen?",
+                "eng": "Forgot password?"
+            }
+        }
+    }
+}
