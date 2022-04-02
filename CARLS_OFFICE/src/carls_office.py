@@ -22,6 +22,7 @@ with open('config.json', 'r', encoding='utf8') as config_file:
 
 city = args.city
 language = 'deu'
+riddle_solved = False
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
                                                         FUNCTIONS
@@ -75,13 +76,19 @@ def pw_hint():
 
 def pw_check(event=0):
     global language
-    
-    if input_password.get() == config['general']['password']:
+    global riddle_solved
+
+    pass_guess = input_password.get()
+    ínput_password.delete(0, END)
+
+    if pass_guess == config['general']['password']:
+        riddle_solved = True
         show_website()
-    elif input_password.get() == config['general']['exit_password']:
+    elif pass_guess == config['general']['exit_password']:
         close()
     else:
-        messagebox.showinfo(config['text']['password_wrong']['title'][language], config['text']['password_wrong']['text'][language])
+        if not riddle_solved:
+            messagebox.showinfo(config['text']['password_wrong']['title'][language], config['text']['password_wrong']['text'][language])
 
 def show_website():
     frame_login.grid_forget()

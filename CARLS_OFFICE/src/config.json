@@ -20,11 +20,11 @@
         "login": {
             "username": {
                 "deu": "Name",
-                "eng": "name"
+                "eng": "Name"
             },
             "password": {
                 "deu": "Passwort",
-                "eng": "password"
+                "eng": "Password"
             }
         },
         "password_wrong": {
