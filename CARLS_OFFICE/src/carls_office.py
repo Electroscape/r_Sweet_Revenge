@@ -79,7 +79,7 @@ def pw_check(event=0):
     global riddle_solved
 
     pass_guess = input_password.get()
-    ínput_password.delete(0, END)
+    input_password.delete(0, END)
 
     if pass_guess == config['general']['password']:
         riddle_solved = True
