@@ -1,13 +1,13 @@
-## Copy this script to the home directory and make it autostart on boot
-# crontab -e
-## at the end of the file paste the following line
-# @reboot sleep 15 && bash ~/run.sh
+# For clean start
+# Kill all relevant programs
+sudo pkill fbi
+sudo pkill vlc
 
-cd TE/Rooms/Sweet_Revenge/poison_scanner
+cd ~/POISON_SCANNER
 
-# for smooth transition instead of terminal appearance
-sudo fbi -a -T 1 --noverbose blackscreen.jpg &
+# for smooth transition instead of the terminal appearance
+sudo fbi -a -T 1 --noverbose img/blackscreen.jpg &
 
 # python script 
-python3 poison_scanner.py
+python3 src/poison_scanner.py
 

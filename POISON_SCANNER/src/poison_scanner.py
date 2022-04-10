@@ -11,9 +11,12 @@ from digitalio import DigitalInOut
 
 from adafruit_pn532.i2c import PN532_I2C
 
+# First of all play the periodic table video
+vid_command = 'cvlc {0}/{1} -f --no-osd --loop &'
+os.system(vid_command.format("vid", "default_dots.MOV"))
+
 # I2C connection:
 i2c = busio.I2C(board.SCL, board.SDA)
-
 
 # keep trying to initialise the sensor
 while True:
@@ -37,8 +40,6 @@ non_poisoned_cards = ['PSB', 'PDT', 'PZK', 'PTB']
 poisoned_cards = ['PVM', 'PSV']
 read_block = 4
 UV_light_pin = 4
-
-vid_command = 'cvlc {0} -f --no-osd --loop &'
 
 UV_LIGHT_ON = GPIO.HIGH
 UV_LIGHT_OFF = GPIO.LOW
@@ -76,11 +77,6 @@ def scan_field():
 def main():
 
     print('Welcome to Poison Scanner')
-    # clean start
-    # Kill all relavent applications
-    os.system("sudo pkill vlc")
-    os.system(vid_command.format("default_dots.MOV"))
-
     print('Waiting Card')
 
     while True:
@@ -107,31 +103,31 @@ def main():
             else:
                 print('Wrong Card')
                 os.system("sudo pkill vlc")
-                os.system(vid_command.format("unknown_strips.MOV"))
+                os.system(vid_command.format("vid", "unknown_strips.MOV"))
 
             if read_data in poisoned_cards: 
                 os.system("sudo pkill vlc")
-                os.system(vid_command.format('Giftscannervideo_toxic_mit_sound.mp4'))
+                os.system(vid_command.format("vid", 'Giftscannervideo_toxic_mit_sound.mp4'))
                 # video is 18 seconds
                 sleep(18)
                 print('Poisoned card')
                 os.system("sudo pkill vlc")
-                os.system(vid_command.format('toxic.png'))
+                os.system(vid_command.format("img", 'toxic.png'))
             elif read_data in non_poisoned_cards:
                 os.system("sudo pkill vlc")
-                os.system(vid_command.format('Giftscannervideo_nontoxic_mit_sound.mp4'))
+                os.system(vid_command.format("img", 'Giftscannervideo_nontoxic_mit_sound.mp4'))
                 # video is 7 seconds
                 sleep(18)
                 print('Clean Card')
                 os.system("sudo pkill vlc")
-                os.system(vid_command.format('nontoxic.png'))
+                os.system(vid_command.format("img", 'nontoxic.png'))
 
             #os.system("sudo pkill omxplayer")
             wait_remove_card(uid)
             print("Card Removed")
             GPIO.output(UV_light_pin, UV_LIGHT_OFF) 
             os.system("sudo pkill vlc")
-            os.system(vid_command.format("default_dots.MOV"))
+            os.system(vid_command.format("img", "default_dots.MOV"))
 
 
 if __name__ == "__main__":
