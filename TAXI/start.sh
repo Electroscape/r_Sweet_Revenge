@@ -1,6 +1,8 @@
 sudo pkill python
 sudo pkill fbi
-sudo pkill omxplayer
+sudo pkill vlc
 
-cd ~/TAXI/src
-python3 taxi.py -c hh
+cd ~/TAXI
+
+#sudo fbi -a -T 1 --noverbose img/blackscreen.jpg &
+python3 src/taxi.py -c hh
