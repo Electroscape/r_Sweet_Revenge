@@ -2,12 +2,12 @@
 import argparse
 import time
 import datetime
+import json
 import os
-import subprocess
 import vlc
 import RPi.GPIO as GPIO
 
-from subprocess import Popen
+
 
 argparser = argparse.ArgumentParser(
     description='Taxi')
@@ -22,35 +22,30 @@ args = argparser.parse_args()
 city = args.city
 
 
-Path_To_TaxiLogo = "cvlc /home/pi/TAXI/img/TaxiLogo.png  -f --no-osd --loop &"
-Path_To_ArrowLogo = "cvlc /home/pi/TAXI/img/ArrowLogo.png  -f --no-osd --loop &"
+with open('src/config.json', 'r') as config_file:
+    config = json.load(config_file)
 
-SENSOR_PIN = 23
-RELAY_PIN = 22
-
-
+SENSOR_PIN = config["pins"]["SENSOR_PIN"]
+RELAY_PIN = config["pins"]["RELAY_PIN"]
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SENSOR_PIN, GPIO.IN)
 GPIO.setup(RELAY_PIN, GPIO.OUT)
 GPIO.output(RELAY_PIN, GPIO.HIGH)
-#media = vlc.MediaPlayer(Path_To_TaxiVideo)
 
+vid_path = config["paths"]["video"]
+Taxi_Logo_path = config["paths"]["TaxiLogo"]
+Arrow_Logo_path = config["paths"]["ArrowLogo"]
 
-
-vid_path = 'TE_SR_Taxi.mp4' 
-pic_path = 'TaxiLogo.png'
-pic2_path = 'ArrowLogo.png'
-
-cmnd = 'cvlc {0} -f --no-osd &'
-vid_command = cmnd.format(f"~/TAXI/vid/hh/{vid_path}")
-pic_command = cmnd.format(f"~/TAXI/img/{pic_path}")
-pic2_command = cmnd.format(f"~/TAXI/img/{pic2_path}")
+cmnd = 'cvlc {0} -f --no-osd --loop &'
+vid_command = cmnd.format( vid_path + "TE_SR_Taxi.mp4" )
+pic_command = cmnd.format(Taxi_Logo_path + "TaxiLogo.png")
+pic2_command = cmnd.format(Arrow_Logo_path + "ArrowLogo.png")
 
 
 os.system(pic_command)
-time.sleep(5)
+time.sleep(15)
 
 #Motion Detection boolean check 
 def checkMotion(motion):
@@ -66,8 +61,7 @@ def playVideo():
     os.system("sudo pkill vlc")
     os.system(vid_command)
   
-    #Popen(['omxplayer', '-b', Path_To_TaxiVideo])
-    time.sleep(25)
+    time.sleep(26)
     os.system("sudo pkill vlc")
 
     # Logging: door was opened

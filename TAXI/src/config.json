@@ -1,0 +1,13 @@
+{
+
+      "pins": {
+        "SENSOR_PIN": 23,
+        "RELAY_PIN": 22
+      },
+      "paths":{
+          "TaxiLogo" : "~/TAXI/img/",
+          "ArrowLogo": "~/TAXI/img/",
+          "video" :  "~/TAXI/vid/hh/ "
+      }
+  
+}
