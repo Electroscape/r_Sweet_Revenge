@@ -14,7 +14,7 @@
         }
     },
     "PATH": {
-        "image": "/home/pi/TAXI/img/",
-        "video": "/home/pi/TAXI/vid/"
+        "image": "/home/2cp/TAXI/img/",
+        "video": "/home/2cp/TAXI/vid/"
     }
 }
