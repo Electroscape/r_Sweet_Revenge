@@ -1,13 +1,13 @@
-# coding=utf-8
 import argparse
 import time
 import datetime
 import json
 import os
+from tokenize import String
 import vlc
 import RPi.GPIO as GPIO
 
-
+video_length = 26
 
 argparser = argparse.ArgumentParser(
     description='Taxi')
@@ -17,72 +17,188 @@ argparser.add_argument(
     '--city',
     help='name of the city: [hh / st]')
 
-args = argparser.parse_args()
 
-city = args.city
+city = argparser.parse_args().city
 
 
+# adjusted the path in start.sh, so no foldername needed here
 with open('src/config.json', 'r') as config_file:
     config = json.load(config_file)
 
-SENSOR_PIN = config["pins"]["SENSOR_PIN"]
-RELAY_PIN = config["pins"]["RELAY_PIN"]
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(SENSOR_PIN, GPIO.IN)
-GPIO.setup(RELAY_PIN, GPIO.OUT)
-GPIO.output(RELAY_PIN, GPIO.HIGH)
-
-vid_path = config["paths"]["video"]
-Taxi_Logo_path = config["paths"]["TaxiLogo"]
-Arrow_Logo_path = config["paths"]["ArrowLogo"]
-
-cmnd = 'cvlc {0} -f --no-osd --loop &'
-vid_command = cmnd.format( vid_path + "TE_SR_Taxi.mp4" )
-pic_command = cmnd.format(Taxi_Logo_path + "TaxiLogo.png")
-pic2_command = cmnd.format(Arrow_Logo_path + "ArrowLogo.png")
+# no extra variable needed
+GPIO.setup(config["PIN"][city]["sensor"], GPIO.IN)
+# no extra variable needed
+GPIO.setup(config["PIN"][city]["relay"], GPIO.OUT)
+# no extra variable needed, True = GPIO.HIGH
+GPIO.output(config["PIN"][city]["relay"], True)
 
 
-os.system(pic_command)
-time.sleep(15)
+# creating Instance class object
+vlc_instance = vlc.Instance( ) # creating Instance class object
+player = vlc_instance.media_player_new() # creating a new media object
+player.set_fullscreen(True) # set full screen
+player.set_mrl(config["PATH"]["image"] + city + "/TaxiLogo.png")
+player.play()
 
-#Motion Detection boolean check 
-def checkMotion(motion):
-    if motion == 1:
+
+# Motion Detection boolean check
+# No camelCase in Python, always use snake_case
+def get_motion_detected(sensor_input):
+    '''
+    Description
+    -----------
+    Checking the output of the connected sensor.\n
+    Is motion detected?
+
+    Parameters
+    ----------
+    sensor_input : *int*
+        - 0 = no motion
+        - 1 = motion
+    '''
+    if sensor_input == 1:
         return True
-        
-    else:
-        return False
+    return False
 
-#play video if sensor is detected
-def playVideo():
+
+def get_door_closed(sensor_input):
+    '''
+    Description
+    -----------
+    Checking the output of the connected sensor.\n
+    Is door closed?
+
+    Parameters
+    ----------
+    sensor_input : *int*
+        - 0 = door open
+        - 1 = door closed
+    '''
+    if sensor_input == 1:
+        return True
+    return False
+
+
+def play_video(path):
+
+    '''
+    Description
+    -----------
+    Displaying the video once sensor is high
+    set the mrl of the video to the mediaplayer
+    play the video and
+
+    Check if its the taxi video or arrow ?
+    "mp4" = Taxi video
+    "png" = ArrowLogo
+    '''
     
-    os.system("sudo pkill vlc")
-    os.system(vid_command)
-  
-    time.sleep(26)
-    os.system("sudo pkill vlc")
 
-    # Logging: door was opened
-    GPIO.output(RELAY_PIN, GPIO.LOW)
-    print("Door Open")
+    player.set_mrl(path)    #setting the media in the mediaplayer object created
+    player.play()           # play the video
+    if path[-3:] == "mp4":  #check if its the taxi video, if not its the arrow video 
+        while player.get_state() != vlc.State.Ended : # loop until the video is finished
+            continue
+        return True
+    else :  # the taxi video is finished, display the arrow
+        while True:
+            continue
+    
+
+def end_of_video():
+    '''
+    Description
+    -----------
+    Sequence after playing the video.\n
+    Opens the door and shows the arrow.
+
+    Parameters
+    ----------
+    None
+    '''
+    set_exit_door(config["PIN"][city]["door_open"])
+    play_video(config["PATH"]["image"] + city + "/ArrowLogo.png")
+
+
+
+def set_exit_door(value):
+    '''
+    Description
+    -----------
+    Controls the relay of the exit door.\n
+    Configuration of door open/closed in config.json
+
+    Parameters
+    ----------
+    value : *bool*
+        - True: GPIO.HIGH
+        - False: GPIO.LOW
+    '''
+    GPIO.output(config["PIN"][city]["relay"], value)
+    
+
+
+def start_conditions_hh():
+    '''
+    Description
+    -----------
+    Conditions to start the taxi sequence in Hamburg.\n
+
+    Parameters
+    ----------
+    None
+
+    Return
+    ----------
+    True: motion detected
+    False: no motion detected
+    '''
+    if get_motion_detected(GPIO.input(config["PIN"][city]["sensor"])):
+        return True
+    return False
+
+
+def start_conditions_st():
+    '''
+    Description
+    -----------
+    Conditions to start the taxi sequence in Stuttgart.\n
+    Sequence:\n
+    - players open door
+    - players get in
+    - players close door
+
+    Parameters
+    ----------
+    None
+
+    Return
+    ----------
+    True: sequence complete
+    False: door not opened yet
+    '''
+    if not get_door_closed(GPIO.input(config["PIN"][city]["sensor"])):
+        while not get_door_closed(GPIO.input(config["PIN"][city]["sensor"])):
+            pass
+        return True
+    return False
 
 
 def main():
 
-    while True:
+    if city == "hh":
+        while not start_conditions_hh():
+            pass
+    elif city == "st":
+        while not start_conditions_st():
+            pass
 
-        detected = checkMotion(GPIO.input(SENSOR_PIN))
-        if not detected:
-            time.sleep(2)
-            print ("Motion is not Detected")
-
-        else:
-            print("Motion is Detected")
-            playVideo()
-            os.system(pic2_command)
-            break
+    # if play_video finished it returns True -> end_of_video starts
+    if play_video(config["PATH"]["video"] + city + "/TE_SR_Taxi.mp4"):
+        end_of_video()
 
 
 if __name__ == "__main__":

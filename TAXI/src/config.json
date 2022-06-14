@@ -1,13 +1,20 @@
 {
-
-      "pins": {
-        "SENSOR_PIN": 23,
-        "RELAY_PIN": 22
-      },
-      "paths":{
-          "TaxiLogo" : "~/TAXI/img/",
-          "ArrowLogo": "~/TAXI/img/",
-          "video" :  "~/TAXI/vid/hh/ "
-      }
-  
+    "PIN": {
+        "hh": {
+            "sensor": 23,
+            "relay": 22,
+            "door_open": false,
+            "door_closed": true
+        },
+        "st": {
+            "sensor": 23,
+            "relay": 22,
+            "door_open": false,
+            "door_closed": true
+        }
+    },
+    "PATH": {
+        "image": "/home/pi/TAXI/img/",
+        "video": "/home/pi/TAXI/vid/"
+    }
 }
