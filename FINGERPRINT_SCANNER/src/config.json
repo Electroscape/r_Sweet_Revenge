@@ -1,0 +1,17 @@
+{
+    "PATH":{
+        "image": "~/FINGERPRINT_SCANNER/img/",
+        "video": "~/FINGERPRINT_SCANNER/vid/"
+    },
+
+    "PIN" : {
+        
+        "hh":{
+            "door_lock_pin" : 4
+        },
+        "ss":{
+            "door_lock_pin" : 4
+        }
+       
+    }
+}
