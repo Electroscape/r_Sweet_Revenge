@@ -1,19 +1,40 @@
 from adafruit_pn532.i2c import PN532_I2C
 from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A
+import argparse
 import busio
 import board
-import tkinter as tk
-from tkinter import W, E
-from tkinter import messagebox
-from tkinter import ttk
-from time import sleep, time
+import RPi.GPIO as GPIO
 from threading import Thread
+from time import sleep, time
+import tkinter as tk
+from tkinter import W, E, messagebox, ttk
 import vlc
 import pyautogui
 
-import RPi.GPIO as GPIO
+
+'''
+Argument parser
+'''
+argparser = argparse.ArgumentParser(
+    description='Fingerprint Scanner')
+
+argparser.add_argument(
+    '-c',
+    '--city',
+    help='name of the city: [hh / st]')
+
+city = argparser.parse_args().city
+
+
+'''
+Load config
+'''
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+
+
 GPIO.setmode(GPIO.BCM)
-# door lock
 door_lock_pin = 4
 
 # I2C connection:

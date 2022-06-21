@@ -1,17 +1,14 @@
 {
-    "PATH":{
+    "PATH": {
         "image": "~/FINGERPRINT_SCANNER/img/",
         "video": "~/FINGERPRINT_SCANNER/vid/"
     },
-
-    "PIN" : {
-        
-        "hh":{
-            "door_lock_pin" : 4
+    "PIN": {
+        "hh": {
+            "door": 4
         },
-        "st":{
-            "door_lock_pin" : 4
+        "st": {
+            "door": 4
         }
-       
     }
 }
