@@ -60,20 +60,20 @@ textSTD = "- Auswahl -"       # Standardtext für Dropdown
 textSTD_en = "- select -"
 
 cards_images = {
-    "BE": "img/fingerprints/1-eva_julius.png",
-    "ZK": "img/fingerprints/2-janine.png",
-    "SB": "img/fingerprints/3-jessica_unknown.png",
-    "TB": "img/fingerprints/4-luise.png",
-    "DT": "img/fingerprints/5-jakob_unknown.png",
-    "RF": "img/fingerprints/6-johannes_unknown.png",
-    "KU": "img/fingerprints/7-jessica.png",
-    "VM": "img/fingerprints/8-julius_unknown_johannes.png",
-    "unk": "img/fingerprints/9-unknown.png"
+    "BE": "1-eva_julius.png",
+    "ZK": "2-janine.png",
+    "SB": "3-jessica_unknown.png",
+    "TB": "4-luise.png",
+    "DT": "5-jakob_unknown.png",
+    "RF": "6-johannes_unknown.png",
+    "KU": "7-jessica.png",
+    "VM": "8-julius_unknown_johannes.png",
+    "unk": "9-unknown.png"
 }
 
 # Scanner video
 Instance = vlc.Instance()
-media = Instance.media_new('vid/scannerfilm_mit_sound.mp4')
+media = Instance.media_new(config['PATH']['video'] + 'scannerfilm_mit_sound.mp4')
 player = Instance.media_player_new()
 player.set_media(media)
 
@@ -171,8 +171,6 @@ window.attributes('-fullscreen', True)
 
 sleep(1)
 
-img_path = "/home/2cp/FINGERPRINT_SCANNER/img/hh/messages/"
-
 
 def popupmsg(ttl, msg):
     global warning_popup
@@ -231,8 +229,7 @@ def card_func(sample_var):
     toplevel.geometry(str_geo)
 
     toplevel.title("Scanning result")
-    FA_Bild = tk.PhotoImage(file=cards_images.get(
-        sample_var, cards_images["unk"]))
+    FA_Bild = tk.PhotoImage(file = config['PATH']['image'] + 'fingerprints/' + cards_images.get(sample_var, cards_images["unk"]))
     FA_Label = tk.Label(toplevel, image=FA_Bild)
     FA_Label.image = FA_Bild
     FA_Label.grid()
@@ -361,11 +358,9 @@ def scan_field():
 
 
 # ------------------------ Hintergrundbild ------------------------
-bg_image_de = tk.PhotoImage(
-    file="/home/2cp/FINGERPRINT_SCANNER/img/hh/background/deu/background.png")
+bg_image_de = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/deu/background.png')
 bg_de = tk.Label(window, image=bg_image_de)
-bg_image_en = tk.PhotoImage(
-    file="/home/2cp/FINGERPRINT_SCANNER/img/hh/background/eng/background.png")
+bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
 bg_en = tk.Label(window, image=bg_image_en)
 
 # ------------------------ Frame ------------------------
@@ -550,13 +545,13 @@ labelHeadline = tk.Label(
     window, text="Sprache wählen | Please select your language", bg=bgDef, font="HELVETICA 40 bold")
 
 # Deutsch
-germanflag = tk.PhotoImage(file="/home/2cp/FINGERPRINT_SCANNER/img/deu.png")
+germanflag = tk.PhotoImage(file = config['PATH']['image'] + 'deu.png')
 labelGerFlag = tk.Label(languageframe, image=germanflag)
 labelGerText = tk.Label(languageframe, text="Deutsch",
                         bg=bgDef, font="HELVETICA 30 bold")
 
 # Englisch
-englishflag = tk.PhotoImage(file="/home/2cp/FINGERPRINT_SCANNER/img/eng.png")
+englishflag = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
 labelEnFlag = tk.Label(languageframe, image=englishflag)
 labelEnText = tk.Label(languageframe, text="English",
                        bg=bgDef, font="HELVETICA 30 bold")
@@ -569,22 +564,19 @@ labelEnText = tk.Label(languageframe, text="English",
 def check_de(event=0):
     if check_beweismittel() == 1 and check_person1() == 1 and check_person2() == 1 and check_toxisch() == 1:
         toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(
-            file="/home/2cp/FINGERPRINT_SCANNER/img/hh/messages/deu/accepted.png")
+        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + '/messages/deu/accepted.png')
         Richter_Label = tk.Label(toplevel, image=Richter_Bild)
         Richter_Label.grid()
         Richter_Label.image = Richter_Bild
     elif check_beweismittel() == 2 and check_person1() == 2 and check_person2() == 1 and check_toxisch() == 2:
         toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(
-            file="/home/2cp/FINGERPRINT_SCANNER/img/hh/messages/deu/hint.png")
+        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + '/messages/deu/hint.png')
         Richter_Label = tk.Label(toplevel, image=Richter_Bild)
         Richter_Label.grid()
         Richter_Label.image = Richter_Bild
     else:
         toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(
-            file="/home/2cp/FINGERPRINT_SCANNER/img/hh/messages/deu/declined.png")
+        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + '/messages/deu/declined.png')
         Richter_Label = tk.Label(toplevel, image=Richter_Bild)
         Richter_Label.grid()
         Richter_Label.image = Richter_Bild
@@ -593,22 +585,19 @@ def check_de(event=0):
 def check_en(event=0):
     if check_proof() == 1 and check_en_person1() == 1 and check_en_person2() == 1 and check_toxic() == 1:
         toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(
-            file="/home/2cp/FINGERPRINT_SCANNER/img/hh/messages/eng/accepted.png")
+        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + '/messages/eng/accepted.png')
         Richter_Label = tk.Label(toplevel, image=Richter_Bild)
         Richter_Label.grid()
         Richter_Label.image = Richter_Bild
     elif check_proof() == 2 and check_en_person1() == 2 and check_en_person2() == 1 and check_toxic() == 2:
         toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(
-            file="/home/2cp/FINGERPRINT_SCANNER/img/hh/messages/eng/hint.png")
+        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + '/messages/eng/hint.png')
         Richter_Label = tk.Label(toplevel, image=Richter_Bild)
         Richter_Label.grid()
         Richter_Label.image = Richter_Bild
     else:
         toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(
-            file="/home/2cp/FINGERPRINT_SCANNER/img/hh/messages/eng/declined.png")
+        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + '/messages/eng/declined.png')
         Richter_Label = tk.Label(toplevel, image=Richter_Bild)
         Richter_Label.grid()
         Richter_Label.image = Richter_Bild
@@ -779,16 +768,13 @@ def check_toxic():
 # ----------------------------------------------------------------------------------------------------------------------
 # ----- Buttons zur Bestätigung der Auswahl ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------
-ButtonSendGer = tk.Button(loginframe, text="Absenden",
-                          font="HELVETICA 18 bold", command=check_de, bg='#E2E2E2')
-ButtonSendEn = tk.Button(loginframe, text="Submit",
-                         font="HELVETICA 18 bold", command=check_en, bg='#E2E2E2')
+ButtonSendGer = tk.Button(loginframe, text="Absenden", font="HELVETICA 18 bold", command=check_de, bg='#E2E2E2')
+ButtonSendEn = tk.Button(loginframe, text="Submit", font="HELVETICA 18 bold", command=check_en, bg='#E2E2E2')
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----- Hauptbildschirm ------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------
-
-
 def SelectGerman(event=0):
     languageframe.grid_forget()
     labelHeadline.grid_forget()
@@ -941,7 +927,6 @@ if __name__ == "__main__":
     c1.start()
 
     videopanel = tk.Frame(top2)
-    canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0,
-                       relief='ridge').pack(fill=tk.BOTH, expand=1)
+    canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0, relief='ridge').pack(fill=tk.BOTH, expand=1)
     videopanel.pack(fill=tk.BOTH, expand=1)
     window.mainloop()
