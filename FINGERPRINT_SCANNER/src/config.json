@@ -10,5 +10,10 @@
         "st": {
             "door": 4
         }
+    },
+    "TKINTER": {
+        "background-color": "#F2F2F2",
+        "tabpadx": 50,
+        "font-size": 22
     }
 }

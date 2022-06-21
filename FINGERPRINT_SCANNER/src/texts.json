@@ -1,0 +1,32 @@
+{
+    "all": {
+        "deu": {
+            "dropdown_std": "- Auswahl -",
+            "dropdown_person_1": ["- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise"],
+            "dropdown_person_2": ["- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise", "Unbekannt"],
+            "dropdown_toxicity": ["Keine Probe", "Toxisch", "Nicht toxisch"]
+        },
+        "eng": {
+            "dropdown_std": "- select -",
+            "dropdown_person_1": ["- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise"],
+            "dropdown_person_2": ["- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise", "unknown"],
+            "dropdown_toxicity": ["no sample", "toxic", "non toxic"]
+        }
+    },
+    "hh": {
+        "deu": {
+            "dropdown_objects": ["Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker"]
+        },
+        "eng": {
+            "dropdown_objects": ["Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener"]
+        }
+    },
+    "st": {
+        "deu": {
+            "dropdown_objects": ["Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Zigaretten", "Zucker"]
+        },
+        "eng": {
+            "dropdown_objects": ["Cigarettes", "Cup", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener"]
+        }
+    }
+}
