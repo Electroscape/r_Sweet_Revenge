@@ -13,7 +13,9 @@ import pyautogui
 
 
 '''
+=========================================================================================================
 Argument parser
+=========================================================================================================
 '''
 argparser = argparse.ArgumentParser(
     description='Fingerprint Scanner')
@@ -27,7 +29,9 @@ city = argparser.parse_args().city
 
 
 '''
+=========================================================================================================
 Load config
+=========================================================================================================
 '''
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
@@ -35,7 +39,6 @@ with open('config.json', 'r') as config_file:
 
 
 GPIO.setmode(GPIO.BCM)
-door_lock_pin = 4
 
 # I2C connection:
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -77,21 +80,11 @@ media = Instance.media_new(config['PATH']['video'] + 'scannerfilm_mit_sound.mp4'
 player = Instance.media_player_new()
 player.set_media(media)
 
-
-def motion(event):
-    # limit the mouse motion to just the GUI dimensions
-    # Returns two integers, the x and y of the mouse cursor's current position.
-    currentMouseX, currentMouseY = pyautogui.position()
-    if currentMouseX < 1024:
-        #print('POS is: {}, {} limitx'.format(currentMouseX, currentMouseY))
-        pyautogui.moveTo(1024, currentMouseY)
-
-
-def reset_mouse(event):
-    currentMouseX, currentMouseY = pyautogui.position()
-    pyautogui.moveTo(1025, currentMouseY)
-
-
+'''
+=========================================================================================================
+RFID functions
+=========================================================================================================
+'''
 def authenticate(uid, read_block):
     rc = 0
     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
@@ -99,115 +92,6 @@ def authenticate(uid, read_block):
         uid, read_block, MIFARE_CMD_AUTH_A, key)
     print(rc)
     return rc
-
-
-class Check_pin(Thread):
-    # Check door status
-    def __init__(self, door_pin):
-        Thread.__init__(self)
-        self.pin = door_pin
-        GPIO.setup(door_lock_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        self.status = bool(GPIO.input(door_lock_pin))
-
-    def checkloop(self):
-        while True:
-            self.reset_mouse()
-            # sleep(1)
-            #print(f"door: {GPIO.input(self.pin)}")
-            if self.status != bool(GPIO.input(self.pin)):
-                self.status = bool(GPIO.input(self.pin))
-                if self.status:
-                    print("door: locked")
-                    scan_field()
-                else:
-                    print("door: unlocked")
-
-    def is_door_closed(self):
-        return bool(GPIO.input(self.pin))
-
-    def reset_mouse(self):
-        currentMouseX, currentMouseY = pyautogui.position()
-        if currentMouseX < 1024:
-            #print('POS is: {}, {} limitx'.format(currentMouseX, currentMouseY))
-            pyautogui.moveTo(1024, currentMouseY)
-
-
-class MyOptionMenu(tk.OptionMenu):
-    # Dropdown anpassen
-    def __init__(self, master, status, *options):
-        self.var = tk.StringVar(master)
-        self.var.set(status)
-        super().__init__(master, self.var, *options)
-        self.config(font=('calibri', (fontSize)), bg='#E2E2E2', width=12)
-        self['menu'].config(font=('calibri', (fontSize)), bg=bgDef)
-
-
-root = tk.Tk()
-root.title("Fingerprint scanner")
-scrW = root.winfo_screenwidth()
-scrH = root.winfo_screenheight()
-geo_str = str(scrW) + "x" + str(scrH)
-
-# We will create two screens: one for the interface, one for laser scanner
-# small screen root
-top2 = tk.Toplevel(root, bg='#000000')
-top2.geometry("+0+0")
-top2.attributes('-fullscreen', tk.TRUE)
-top2.wm_attributes("-topmost", 1)  # make sure window is on top to start
-
-# big screen
-window = root
-root.option_add('*Dialog.msg.width', 34)
-print("Geo str: " + geo_str)
-window.geometry(geo_str)
-window.title("Forensik Hamburg")
-window.grid_rowconfigure(0, weight=1)
-window.grid_rowconfigure(2, weight=1)
-window.grid_columnconfigure(0, weight=1)
-window.grid_columnconfigure(2, weight=1)
-# window.wm_attributes("-topmost", 1)  # make sure window is on top to start
-window.configure(background=bgDef)
-window.attributes('-fullscreen', True)
-
-sleep(1)
-
-
-def popupmsg(ttl, msg):
-    global warning_popup
-
-    try:
-        warning_popup.destroy()
-    except (AttributeError, NameError):
-        warning_popup = None
-
-    #popup.wm_title(ttl)
-    # keeps popup above everything until closed.
-    # popup.wm_attributes('-topmost', True)
-    # this is outter background colour
-    #popup.configure(background='#4a4a4a')
-    top = tk.Toplevel(root)
-    top.details_expanded = False
-    top.title(ttl)
-    w = 300
-    h = 100
-    ws = root.winfo_screenwidth()
-    hs = root.winfo_screenheight()
-    x = int((ws/2)) + 200
-    y = int((hs/2) - (h/2))
-    top.geometry("{}x{}+{}+{}".format(w, h, x, y))
-    top.resizable(False, False)
-    top.rowconfigure(0, weight=0)
-    top.rowconfigure(1, weight=1)
-    top.columnconfigure(0, weight=1)
-    top.columnconfigure(1, weight=1)
-    tk.Label(top, image="::tk::icons::question").grid(row=0, column=0, pady=(7, 0), padx=(7, 7), sticky="e")
-    tk.Label(top, text=msg).grid(row=0, column=1, columnspan=2, pady=(7, 7), sticky="w")
-    ttk.Button(top, text="OK", command=top.destroy).grid(row=1, column=2, padx=(7, 7), sticky="e")
-    top.lift(root)
-    warning_popup = top
-
-# ------------------------ RFID ------------------------
-
 
 def card_func(sample_var):
     sleep(1)
@@ -355,6 +239,147 @@ def scan_field():
 
     window.update()
     return uid
+
+
+'''
+=========================================================================================================
+Tkinter classes
+=========================================================================================================
+'''
+class MyOptionMenu(tk.OptionMenu):
+    # Dropdown anpassen
+    def __init__(self, master, status, *options):
+        self.var = tk.StringVar(master)
+        self.var.set(status)
+        super().__init__(master, self.var, *options)
+        self.config(font=('calibri', (fontSize)), bg='#E2E2E2', width=12)
+        self['menu'].config(font=('calibri', (fontSize)), bg=bgDef)
+
+'''
+=========================================================================================================
+Tkinter functions
+=========================================================================================================
+'''
+def motion(event):
+    # limit the mouse motion to just the GUI dimensions
+    # Returns two integers, the x and y of the mouse cursor's current position.
+    currentMouseX, currentMouseY = pyautogui.position()
+    if currentMouseX < 1024:
+        #print('POS is: {}, {} limitx'.format(currentMouseX, currentMouseY))
+        pyautogui.moveTo(1024, currentMouseY)
+
+
+def reset_mouse(event):
+    currentMouseX, currentMouseY = pyautogui.position()
+    pyautogui.moveTo(1025, currentMouseY)
+
+
+def popupmsg(ttl, msg):
+    global warning_popup
+
+    try:
+        warning_popup.destroy()
+    except (AttributeError, NameError):
+        warning_popup = None
+
+    #popup.wm_title(ttl)
+    # keeps popup above everything until closed.
+    # popup.wm_attributes('-topmost', True)
+    # this is outter background colour
+    #popup.configure(background='#4a4a4a')
+    top = tk.Toplevel(root)
+    top.details_expanded = False
+    top.title(ttl)
+    w = 300
+    h = 100
+    ws = root.winfo_screenwidth()
+    hs = root.winfo_screenheight()
+    x = int((ws/2)) + 200
+    y = int((hs/2) - (h/2))
+    top.geometry("{}x{}+{}+{}".format(w, h, x, y))
+    top.resizable(False, False)
+    top.rowconfigure(0, weight=0)
+    top.rowconfigure(1, weight=1)
+    top.columnconfigure(0, weight=1)
+    top.columnconfigure(1, weight=1)
+    tk.Label(top, image="::tk::icons::question").grid(row=0, column=0, pady=(7, 0), padx=(7, 7), sticky="e")
+    tk.Label(top, text=msg).grid(row=0, column=1, columnspan=2, pady=(7, 7), sticky="w")
+    ttk.Button(top, text="OK", command=top.destroy).grid(row=1, column=2, padx=(7, 7), sticky="e")
+    top.lift(root)
+    warning_popup = top
+
+
+'''
+Other stuff
+'''
+
+
+class Check_pin(Thread):
+    # Check door status
+    def __init__(self, door_pin):
+        Thread.__init__(self)
+        self.pin = door_pin
+        GPIO.setup(config['PIN'][city]['door'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        self.status = bool(GPIO.input(config['PIN'][city]['door']))
+
+    def checkloop(self):
+        while True:
+            self.reset_mouse()
+            # sleep(1)
+            #print(f"door: {GPIO.input(self.pin)}")
+            if self.status != bool(GPIO.input(self.pin)):
+                self.status = bool(GPIO.input(self.pin))
+                if self.status:
+                    print("door: locked")
+                    scan_field()
+                else:
+                    print("door: unlocked")
+
+    def is_door_closed(self):
+        return bool(GPIO.input(self.pin))
+
+    def reset_mouse(self):
+        currentMouseX, currentMouseY = pyautogui.position()
+        if currentMouseX < 1024:
+            #print('POS is: {}, {} limitx'.format(currentMouseX, currentMouseY))
+            pyautogui.moveTo(1024, currentMouseY)
+
+
+
+root = tk.Tk()
+root.title("Fingerprint scanner")
+scrW = root.winfo_screenwidth()
+scrH = root.winfo_screenheight()
+geo_str = str(scrW) + "x" + str(scrH)
+
+# We will create two screens: one for the interface, one for laser scanner
+# small screen root
+top2 = tk.Toplevel(root, bg='#000000')
+top2.geometry("+0+0")
+top2.attributes('-fullscreen', tk.TRUE)
+top2.wm_attributes("-topmost", 1)  # make sure window is on top to start
+
+# big screen
+window = root
+root.option_add('*Dialog.msg.width', 34)
+print("Geo str: " + geo_str)
+window.geometry(geo_str)
+window.title("Forensik Hamburg")
+window.grid_rowconfigure(0, weight=1)
+window.grid_rowconfigure(2, weight=1)
+window.grid_columnconfigure(0, weight=1)
+window.grid_columnconfigure(2, weight=1)
+# window.wm_attributes("-topmost", 1)  # make sure window is on top to start
+window.configure(background=bgDef)
+window.attributes('-fullscreen', True)
+
+sleep(1)
+
+
+# ------------------------ RFID ------------------------
+
+
+
 
 
 # ------------------------ Hintergrundbild ------------------------
@@ -922,7 +947,7 @@ if __name__ == "__main__":
     picture_popup = None
 
     # start door checking thread
-    chk_door = Check_pin(door_lock_pin)
+    chk_door = Check_pin(config['PIN'][city]['door'])
     c1 = Thread(target=chk_door.checkloop)
     c1.start()
 
