@@ -4,13 +4,23 @@
             "dropdown_std": "- Auswahl -",
             "dropdown_person_1": ["- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise"],
             "dropdown_person_2": ["- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise", "Unbekannt"],
-            "dropdown_toxicity": ["Keine Probe", "Toxisch", "Nicht toxisch"]
+            "dropdown_toxicity": ["Keine Probe", "Toxisch", "Nicht toxisch"],
+            "head_place": "Fundort",
+            "head_object": "Objekt",
+            "head_person_1": "Fingerabdruck 1",
+            "head_person_2": "Fingerabdruck 2",
+            "head_toxicity": "Toxizität"
         },
         "eng": {
             "dropdown_std": "- select -",
             "dropdown_person_1": ["- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise"],
             "dropdown_person_2": ["- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise", "unknown"],
-            "dropdown_toxicity": ["no sample", "toxic", "non toxic"]
+            "dropdown_toxicity": ["no sample", "toxic", "non toxic"],
+            "head_place": "Location",
+            "head_object": "Object",
+            "head_person_1": "1st fingerprint",
+            "head_person_2": "2nd fingerprint",
+            "head_toxicity": "Toxicity"
         }
     },
     "hh": {

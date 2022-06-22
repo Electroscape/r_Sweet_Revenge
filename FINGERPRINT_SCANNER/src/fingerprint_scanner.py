@@ -89,11 +89,16 @@ media = Instance.media_new(config['PATH']['video'] + 'scannerfilm_mit_sound.mp4'
 player = Instance.media_player_new()
 player.set_media(media)
 
-#bgDef = '#F2F2F2'             # Hintergrundfarbe -> moved to config.json: config['TKINTER']['background-color']
-#tabpadx = 50                  # Spaltenbreite der Einträge -> moved to config.json: config['TKINTER']['tabpadx']
-#fontSize = 22                 # Schriftgröße -> moved to config.json: config['TKINTER']['font-size']
-#textSTD = "- Auswahl -"       # Standardtext für Dropdown -> moved to texts.json: texts['all']['deu']['dropdown_std']
-#textSTD_en = "- select -"     # -> moved to texts.json: texts['all']['eng']['dropdown_std']
+'''
+=========================================================================================================
+Variable init
+=========================================================================================================
+'''
+places = []
+proof = []
+person_one = []
+person_two = []
+toxicity = []
 
 
 '''
@@ -561,130 +566,73 @@ def check_toxic():
         var_toxic = 0
     return var_toxic
 
-
-def SelectGerman(event=0):
-    frame_language.grid_forget()
-    label_headline.grid_forget()
-    frame_login.grid(row=1, column=1)
-    label_background_deu.grid(row=1, column=1)
-    ort.grid(row=0, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    ort1.grid(row=1, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    ort2.grid(row=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    ort3.grid(row=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    ort4.grid(row=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    ort5.grid(row=5, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    ort6.grid(row=6, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    ort7.grid(row=7, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    beweismittel.grid(row=0, column=1, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    beweismittel1.grid(row=1, column=1, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    beweismittel2.grid(row=2, column=1, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    beweismittel3.grid(row=3, column=1, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    beweismittel4.grid(row=4, column=1, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    beweismittel5.grid(row=5, column=1, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    beweismittel6.grid(row=6, column=1, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    beweismittel7.grid(row=7, column=1, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    personEins.grid(row=0, column=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    person11.grid(row=1, column=2, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person12.grid(row=2, column=2, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person13.grid(row=3, column=2, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person14.grid(row=4, column=2, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person15.grid(row=5, column=2, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person16.grid(row=6, column=2, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person17.grid(row=7, column=2, sticky=W, padx=config['TKINTER']['tabpadx'])
-    personZwei.grid(row=0, column=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    person21.grid(row=1, column=3, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person22.grid(row=2, column=3, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person23.grid(row=3, column=3, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person24.grid(row=4, column=3, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person25.grid(row=5, column=3, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person26.grid(row=6, column=3, sticky=W, padx=config['TKINTER']['tabpadx'])
-    person27.grid(row=7, column=3, sticky=W, padx=config['TKINTER']['tabpadx'])
-    Toxisch.grid(row=0, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    toxisch1.grid(row=1, column=4, sticky=W, padx=config['TKINTER']['tabpadx'])
-    toxisch2.grid(row=2, column=4, sticky=W, padx=config['TKINTER']['tabpadx'])
-    toxisch3.grid(row=3, column=4, sticky=W, padx=config['TKINTER']['tabpadx'])
-    toxisch4.grid(row=4, column=4, sticky=W, padx=config['TKINTER']['tabpadx'])
-    toxisch5.grid(row=5, column=4, sticky=W, padx=config['TKINTER']['tabpadx'])
-    toxisch6.grid(row=6, column=4, sticky=W, padx=config['TKINTER']['tabpadx'])
-    toxisch7.grid(row=7, column=4, sticky=W, padx=config['TKINTER']['tabpadx'])
-    ButtonGer.grid_forget()
-    ButtonEn.grid_forget()
-    ButtonSendGer.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)
-    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
-    # Activate scanning ability
-    ButtonScan["state"] = tk.NORMAL
-
-
-def SelectEnglish(event=0):
-    frame_language.grid_forget()
-    label_headline.grid_forget()
-    frame_login.grid(row=1, column=1)
-    label_background_eng.grid(row=1, column=1)
-    place.grid(row=0, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    place1.grid(row=1, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    place2.grid(row=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    place3.grid(row=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    place4.grid(row=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    place5.grid(row=5, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    place6.grid(row=6, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    place7.grid(row=7, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    proof.grid(row=0, column=1, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    proof1.grid(row=1, column=1, sticky=W, padx=config['TKINTER']['tabpadx'])
-    proof2.grid(row=2, column=1, sticky=W, padx=config['TKINTER']['tabpadx'])
-    proof3.grid(row=3, column=1, sticky=W, padx=config['TKINTER']['tabpadx'])
-    proof4.grid(row=4, column=1, sticky=W, padx=config['TKINTER']['tabpadx'])
-    proof5.grid(row=5, column=1, sticky=W, padx=config['TKINTER']['tabpadx'])
-    proof6.grid(row=6, column=1, sticky=W, padx=config['TKINTER']['tabpadx'])
-    proof7.grid(row=7, column=1, sticky=W, padx=config['TKINTER']['tabpadx'])
-    personOne.grid(row=0, column=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    en_person11.grid(row=1, column=2, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person12.grid(row=2, column=2, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person13.grid(row=3, column=2, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person14.grid(row=4, column=2, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person15.grid(row=5, column=2, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person16.grid(row=6, column=2, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person17.grid(row=7, column=2, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    personTwo.grid(row=0, column=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    en_person21.grid(row=1, column=3, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person22.grid(row=2, column=3, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person23.grid(row=3, column=3, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person24.grid(row=4, column=3, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person25.grid(row=5, column=3, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person26.grid(row=6, column=3, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    en_person27.grid(row=7, column=3, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    toxic.grid(row=0, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    toxic1.grid(row=1, column=4, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    toxic2.grid(row=2, column=4, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    toxic3.grid(row=3, column=4, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    toxic4.grid(row=4, column=4, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    toxic5.grid(row=5, column=4, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    toxic6.grid(row=6, column=4, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    toxic7.grid(row=7, column=4, sticky=E+W, padx=config['TKINTER']['tabpadx'])
-    ButtonGer.grid_forget()
-    ButtonEn.grid_forget()
-    ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)
-    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
-    # Activate scanning ability
-    ButtonScan["state"] = tk.NORMAL
-
-
+# from here on there are new functions
 def landingpage():
+    window.unbind('<Return>')
     frame_language.grid(row=1, column=1)
     label_headline.grid(row=0, column=0, sticky=W+E, columnspan=3)
-    ButtonGer.grid(row=0, column=0, sticky=W+E, padx=config['TKINTER']['tabpadx'], pady=20)
-    ButtonEn.grid(row=1, column=0, sticky=W+E, padx=config['TKINTER']['tabpadx'], pady=20)
+    button_deu.grid(row=0, column=0, sticky=W+E, padx=config['TKINTER']['tabpadx'], pady=20)
+    button_eng.grid(row=1, column=0, sticky=W+E, padx=config['TKINTER']['tabpadx'], pady=20)
 
 
 def select_eng():
     global language
     language = 'eng'
+    evidence_collection()()
 
 
 def select_deu():
     global language
     language = 'deu'
+    evidence_collection()()
 
 
+def evidence_collection():
+    frame_language.grid_forget()
+    label_headline.grid_forget()
+    button_deu.grid_forget()
+    button_eng.grid_forget()
+
+    # bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
+    # label_background_eng.configure(image=bg_image_en)
+    # label_background_eng.image=bg_image_en
+    # label_background_eng.place(x=0, y=0)
+
+    frame_login.grid(row=1, column=1)
+    
+    places.append(tk.Label(frame_login, text=texts['all'][language]['head_place'], bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
+    for i in range(1, 8):
+        places.append(tk.Label(frame_login, text=i, bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold"))
+    for i in range(0, len(places)):
+        places[i].grid(row=i, sticky=W+E, padx=config['TKINTER']['tabpadx'])
+
+    init_dropdown(proof, texts['all'][language]['head_object'], texts[city][language]['dropdown_objects'])
+    for i in range(0, len(proof)):
+        proof[i].grid(row=i, column=1, sticky=W+E, padx=config['TKINTER']['tabpadx'])
+
+    init_dropdown(person_one, texts['all'][language]['head_person_1'], texts['all'][language]['dropdown_person_1'])
+    for i in range(0, len(person_one)):
+        person_one[i].grid(row=i, column=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])
+
+    init_dropdown(person_two, texts['all'][language]['head_person_2'], texts['all'][language]['dropdown_person_2'])
+    for i in range(0, len(person_two)):
+        person_two[i].grid(row=i, column=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])
+
+    init_dropdown(toxicity, texts['all'][language]['head_toxicity'], texts['all'][language]['dropdown_toxicity'])
+    for i in range(0, len(toxicity)):
+        toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])
+    
+
+    ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)
+    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
+    ButtonScan["state"] = tk.NORMAL   # Activate scanning ability
+
+
+def init_dropdown(_list, text_head, text_dropdown):
+    _list.append(tk.Label(frame_login, text=text_head, bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
+    for i in range(1, 8):
+        _list.append(MyOptionMenu(frame_login, texts['all'][language]['dropdown_std'], *text_dropdown))
+    
 '''
 =========================================================================================================
 "MAIN"
@@ -698,10 +646,10 @@ geo_str = str(scrW) + "x" + str(scrH)
 
 # We will create two screens: one for the interface, one for laser scanner
 # small screen root
-top2 = tk.Toplevel(root, bg='#000000')
-top2.geometry("+0+0")
-top2.attributes('-fullscreen', tk.TRUE)
-top2.wm_attributes("-topmost", 1)  # make sure window is on top to start
+# top2 = tk.Toplevel(root, bg='#000000')
+# top2.geometry("+0+0")
+# top2.attributes('-fullscreen', tk.TRUE)
+# top2.wm_attributes("-topmost", 1)  # make sure window is on top to start
 
 # big screen
 window = root
@@ -726,27 +674,19 @@ frame_language = tk.Frame(window, bg=config['TKINTER']['background-color'], bd=2
 
 # ------------------------ Images ---------------------------------
 bg_image_de = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/deu/background.png')
-bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
+#bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
 flag_deu = tk.PhotoImage(file = config['PATH']['image'] + 'deu.png')
 flag_eng = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
 
 # ------------------------ Label ----------------------------------
-label_background_deu = tk.Label(window, image=bg_image_de)
-label_background_eng = tk.Label(window, image=bg_image_en)
 label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
+label_background_deu = tk.Label(window, image=bg_image_de)
+#label_background_eng = tk.Label(window, image=bg_image_en)
+label_background_eng = tk.Label(window, bg='#FFFFFF')
 label_flag_deu = tk.Label(frame_language, image=flag_deu)
 label_flag_eng = tk.Label(frame_language, image=flag_eng)
 label_text_deu = tk.Label(frame_language, text="Deutsch", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
 label_text_eng = tk.Label(frame_language, text="English", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
-
-
-# ------------------------ Hintergrundbild ------------------------
-#bg_image_de = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/deu/background.png')
-#label_background_deu = tk.Label(window, image=bg_image_de)
-#bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
-#label_background_eng = tk.Label(window, image=bg_image_en)
-
-
 
 
 # ------------------------ Buttons ------------------------
@@ -755,178 +695,28 @@ ButtonScan.config(activebackground='#FF5050')
 ButtonScan["state"] = tk.DISABLED   # Disable scanning ability
 ButtonSendGer = tk.Button(frame_login, text="Absenden", font="HELVETICA 18 bold", command=check_de, bg='#E2E2E2')
 ButtonSendEn = tk.Button(frame_login, text="Submit", font="HELVETICA 18 bold", command=check_en, bg='#E2E2E2')
-ButtonGer = tk.Button(frame_language, image=flag_deu, command=SelectGerman)
-ButtonEn = tk.Button(frame_language, image=flag_eng, command=SelectEnglish)
-
-# ----------------------------------------------------------------------------------------------------------------------
-# ----- Dropdownmenü ---------------------------------------------------------------------------------------------------
-# ----------------------------------------------------------------------------------------------------------------------
-
-# --- deutsch ---
-
-# Fundort
-ort = tk.Label(frame_login, text="Fundort", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-ort1 = tk.Label(frame_login, text="1", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-ort2 = tk.Label(frame_login, text="2", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-ort3 = tk.Label(frame_login, text="3", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-ort4 = tk.Label(frame_login, text="4", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-ort5 = tk.Label(frame_login, text="5", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-ort6 = tk.Label(frame_login, text="6", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-ort7 = tk.Label(frame_login, text="7", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-# Objekt
-beweismittel = tk.Label(frame_login, text="Objekt", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-beweismittel1 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker")
-beweismittel2 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker")
-beweismittel3 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker")
-beweismittel4 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker")
-beweismittel5 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker")
-beweismittel6 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker")
-beweismittel7 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker")
-# Person 1
-personEins = tk.Label(frame_login, text="Fingerabdruck 1", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-person11 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person12 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person13 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person14 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person15 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person16 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person17 = MyOptionMenu(frame_login, texts['all']['deu']['dropdown_std'], "- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-# Person 2
-personZwei = tk.Label(frame_login, text="Fingerabdruck 2", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-person21 = MyOptionMenu(frame_login, "- kein -", "- kein -", "Unbekannt", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person22 = MyOptionMenu(frame_login, "- kein -", "- kein -", "Unbekannt", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person23 = MyOptionMenu(frame_login, "- kein -", "- kein -", "Unbekannt", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person24 = MyOptionMenu(frame_login, "- kein -", "- kein -", "Unbekannt", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person25 = MyOptionMenu(frame_login, "- kein -", "- kein -", "Unbekannt", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person26 = MyOptionMenu(frame_login, "- kein -", "- kein -", "Unbekannt", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-person27 = MyOptionMenu(frame_login, "- kein -", "- kein -", "Unbekannt", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-# Toxisch/nicht toxisch
-Toxisch = tk.Label(frame_login, text="Toxizität", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-toxisch1 = MyOptionMenu(frame_login, "- Auswählen -", "Keine Probe", "Toxisch", "Nicht toxisch")
-toxisch2 = MyOptionMenu(frame_login, "- Auswählen -", "Keine Probe", "Toxisch", "Nicht toxisch")
-toxisch3 = MyOptionMenu(frame_login, "- Auswählen -", "Keine Probe", "Toxisch", "Nicht toxisch")
-toxisch4 = MyOptionMenu(frame_login, "- Auswählen -", "Keine Probe", "Toxisch", "Nicht toxisch")
-toxisch5 = MyOptionMenu(frame_login, "- Auswählen -", "Keine Probe", "Toxisch", "Nicht toxisch")
-toxisch6 = MyOptionMenu(frame_login, "- Auswählen -", "Keine Probe", "Toxisch", "Nicht toxisch")
-toxisch7 = MyOptionMenu(frame_login, "- Auswählen -", "Keine Probe", "Toxisch", "Nicht toxisch")
-
-# --- englisch ---
-
-# Fundort
-place = tk.Label(frame_login, text="Place", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-place1 = tk.Label(frame_login, text="1", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-place2 = tk.Label(frame_login, text="2", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-place3 = tk.Label(frame_login, text="3", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-place4 = tk.Label(frame_login, text="4", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-place5 = tk.Label(frame_login, text="5", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-place6 = tk.Label(frame_login, text="6", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-place7 = tk.Label(frame_login, text="7", bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold")
-# Objekt
-proof = tk.Label(frame_login, text="Object", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-proof1 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener")
-proof2 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener")
-proof3 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener")
-proof4 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener")
-proof5 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener")
-proof6 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener")
-proof7 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener")
-# Person 1
-personOne = tk.Label(frame_login, text="1st fingerprint", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-en_person11 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person12 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person13 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person14 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person15 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person16 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person17 = MyOptionMenu(frame_login, texts['all']['eng']['dropdown_std'], "- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-# Person 2
-personTwo = tk.Label(frame_login, text="2nd fingerprint", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-en_person21 = MyOptionMenu(frame_login, "- none -", "- none -", "Unknown", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person22 = MyOptionMenu(frame_login, "- none -", "- none -", "Unknown", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person23 = MyOptionMenu(frame_login, "- none -", "- none -", "Unknown", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person24 = MyOptionMenu(frame_login, "- none -", "- none -", "Unknown", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person25 = MyOptionMenu(frame_login, "- none -", "- none -", "Unknown", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person26 = MyOptionMenu(frame_login, "- none -", "- none -", "Unknown", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-en_person27 = MyOptionMenu(frame_login, "- none -", "- none -", "Unknown", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise")
-# Toxic/not toxic
-toxic = tk.Label(frame_login, text="Toxicity", bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold")
-toxic1 = MyOptionMenu(frame_login, "- choose -", "no sample", "toxic", "non toxic")
-toxic2 = MyOptionMenu(frame_login, "- choose -", "no sample", "toxic", "non toxic")
-toxic3 = MyOptionMenu(frame_login, "- choose -", "no sample", "toxic", "non toxic")
-toxic4 = MyOptionMenu(frame_login, "- choose -", "no sample", "toxic", "non toxic")
-toxic5 = MyOptionMenu(frame_login, "- choose -", "no sample", "toxic", "non toxic")
-toxic6 = MyOptionMenu(frame_login, "- choose -", "no sample", "toxic", "non toxic")
-toxic7 = MyOptionMenu(frame_login, "- choose -", "no sample", "toxic", "non toxic")
+button_deu = tk.Button(frame_language, image=flag_deu, command=lambda: select_deu())
+button_eng = tk.Button(frame_language, image=flag_eng, command=lambda: select_eng())
 
 
-# ------------------------ Sprachauswahl ------------------------
 
 
-# Überschrift
-#label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
-
-# Deutsch
-# flag_deu = tk.PhotoImage(file = config['PATH']['image'] + 'deu.png')
-# label_flag_deu = tk.Label(frame_language, image=flag_deu)
-# label_text_deu = tk.Label(frame_language, text="Deutsch", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
-
-# Englisch
-# flag_eng = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
-# label_flag_eng = tk.Label(frame_language, image=flag_eng)
-# label_text_eng = tk.Label(frame_language, text="English", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
-
-# ----------------------------------------------------------------------------------------------------------------------
-# ----- Buttons --------------------------------------------------------------------------------------------------------
-# ----------------------------------------------------------------------------------------------------------------------
-# ButtonSendGer = tk.Button(frame_login, text="Absenden", font="HELVETICA 18 bold", command=check_de, bg='#E2E2E2')
-# ButtonSendEn = tk.Button(frame_login, text="Submit", font="HELVETICA 18 bold", command=check_en, bg='#E2E2E2')
-
-
-# # ------------------------ Buttons um zum Hauptbildschirm zu gelangen ------------------------
-# ButtonGer = tk.Button(frame_language, image=flag_deu, command=SelectGerman)
-# ButtonEn = tk.Button(frame_language, image=flag_eng, command=SelectEnglish)
-
-# Sprachauswahl Widgets -> moved to landingpage()
-# frame_language.grid(row=1, column=1)
-# label_headline.grid(row=0, column=0, sticky=W+E, columnspan=3)
-# ButtonGer.grid(row=0, column=0, sticky=W+E, padx=config['TKINTER']['tabpadx'], pady=20)
-# ButtonEn.grid(row=1, column=0, sticky=W+E, padx=config['TKINTER']['tabpadx'], pady=20)
 landingpage()
 
-'''
-def dismiss(event):
-    label2.grid_forget()
-    frame_login.grid(row=1, column=1)
-    username.grid(row=0, sticky=W)
-    passwordtext.grid(row=1, sticky=W)
-    entry0.grid(row=0, column=1)
-    entry1.grid(row=1, column=1)
-    label1.grid(row=0, column=2, columnspan=2, rowspan=2, sticky=W+E+N+S, padx=10, pady=10)
-    button1.grid(row=2, column=1, sticky=W+E)
-    button2.grid(row=2, column=3, sticky=W+E, padx=10)
-        
-# Tastenbindung
-window.bind('<Escape>', dismiss)
-
 # Mainloop
-'''
-if __name__ == "__main__":
-    # Lock cursor inside gui
-    pyautogui.FAILSAFE = False
-    #root.bind('<Motion>', motion)
-    # reset_mouse(event=None)
-    #top2.bind('<Enter>', reset_mouse)
-    top2.config(cursor="none")
 
-    warning_popup = None
-    picture_popup = None
+#if __name__ == "__main__":
+    # pyautogui.FAILSAFE = False
+    # top2.config(cursor="none")
 
-    # start door checking thread
-    chk_door = Check_pin(config['PIN'][city]['door'])
-    c1 = Thread(target=chk_door.checkloop)
-    c1.start()
+    # warning_popup = None
+    # picture_popup = None
 
-    videopanel = tk.Frame(top2)
-    canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0, relief='ridge').pack(fill=tk.BOTH, expand=1)
-    videopanel.pack(fill=tk.BOTH, expand=1)
-    window.mainloop()
+    # chk_door = Check_pin(config['PIN'][city]['door'])
+    # c1 = Thread(target=chk_door.checkloop)
+    # c1.start()
+
+    # videopanel = tk.Frame(top2)
+    # canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0, relief='ridge').pack(fill=tk.BOTH, expand=1)
+    # videopanel.pack(fill=tk.BOTH, expand=1)
+window.mainloop()
