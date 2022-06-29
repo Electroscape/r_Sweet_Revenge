@@ -1,17 +1,19 @@
 {
-    "PATH":{
-        "image": "~/FINGERPRINT_SCANNER/img/",
-        "video": "~/FINGERPRINT_SCANNER/vid/"
+    "PATH": {
+        "image": "/home/2cp/FINGERPRINT_SCANNER/img/",
+        "video": "/home/2cp/FINGERPRINT_SCANNER/vid/"
     },
-
-    "PIN" : {
-        
-        "hh":{
-            "door_lock_pin" : 4
+    "PIN": {
+        "hh": {
+            "door": 4
         },
-        "st":{
-            "door_lock_pin" : 4
+        "st": {
+            "door": 4
         }
-       
+    },
+    "TKINTER": {
+        "background-color": "#F2F2F2",
+        "tabpadx": 50,
+        "font-size": 22
     }
 }
