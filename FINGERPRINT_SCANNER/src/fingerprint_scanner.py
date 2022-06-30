@@ -13,6 +13,8 @@ import vlc
 import pyautogui
 
 
+
+
 '''
 =========================================================================================================
 Argument parser
@@ -47,30 +49,69 @@ Global language variable
 '''
 language = 'deu'
 
+'''
+=========================================================================================================
+Global tkinter variables
+=========================================================================================================
+'''
+
+root = tk.Tk()
+scrW = root.winfo_screenwidth()
+scrH = root.winfo_screenheight()
+top2 = tk.Toplevel(root, bg='#000000')
+window = root
+videopanel = tk.Frame(top2)
+pyautogui.FAILSAFE = False
+warning_popup = None
+picture_popup = None
+
+# ------------------------ Frame ----------------------------------
+frame_login = tk.Frame(window, bg=config['TKINTER']['background-color'], bd=0, height=700, width=1620)
+frame_language = tk.Frame(window, bg=config['TKINTER']['background-color'], bd=200, height=700, width=700)
+
+# ------------------------ Images ---------------------------------
+bg_image_de = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/deu/background.png')
+bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
+flag_deu = tk.PhotoImage(file = config['PATH']['image'] + 'deu.png')
+flag_eng = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
+
+# ------------------------ Label ----------------------------------
+label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
+label_background_deu = tk.Label(window, image=bg_image_de)
+label_background_eng = tk.Label(window, image=bg_image_en)
+label_background_eng = tk.Label(window, bg='#FFFFFF')
+label_flag_deu = tk.Label(frame_language, image=flag_deu)
+label_flag_eng = tk.Label(frame_language, image=flag_eng)
+label_text_deu = tk.Label(frame_language, text="Deutsch", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
+label_text_eng = tk.Label(frame_language, text="English", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
+
+# ------------------------ Buttons ------------------------
+
+button_deu = tk.Button(frame_language, image=flag_deu, command=lambda: select_deu())
+button_eng = tk.Button(frame_language, image=flag_eng, command=lambda: select_eng())
+
+'''
+=========================================================================================================
+Global VLC variables
+=========================================================================================================
+'''
+
+vlc_instance = vlc.Instance( ) # creating Instance class object
+player = vlc_instance.media_player_new() # creating a new media object
+
 
 '''
 =========================================================================================================
 PN532 init
 =========================================================================================================
 '''
-read_block = 4
+
 pn532 = PN532_I2C(busio.I2C(board.SCL, board.SDA), debug=False)
 ic, ver, rev, support = pn532.firmware_version
 print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
 sleep(0.5)  # this delay avoids some problems after wakeup
 pn532.SAM_configuration()   # Configure PN532 to communicate with MiFare cards
 
-cards_images = {
-    "BE": "1-eva_julius.png",
-    "ZK": "2-janine.png",
-    "SB": "3-jessica_unknown.png",
-    "TB": "4-luise.png",
-    "DT": "5-jakob_unknown.png",
-    "RF": "6-johannes_unknown.png",
-    "KU": "7-jessica.png",
-    "VM": "8-julius_unknown_johannes.png",
-    "unk": "9-unknown.png"
-}
 
 '''
 =========================================================================================================
@@ -81,47 +122,10 @@ GPIO.setmode(GPIO.BCM)
 
 '''
 =========================================================================================================
-VLC init
-=========================================================================================================
-'''
-#Instance = vlc.Instance()
-#media = Instance.media_new(config['PATH']['video'] + 'scannerfilm_mit_sound.mp4')
-#player = Instance.media_player_new()
-#player.set_media(media)
-
-def play_video(path):
-
-    '''
-    Description
-    -----------
-    Displaying the video once sensor is high
-    set the mrl of the video to the mediaplayer
-    play the video and
-
-    "mp4" = scanner video.mp4
-
-    '''
-    vlc_instance = vlc.Instance( ) # creating Instance class object
-    player = vlc_instance.media_player_new() # creating a new media object
-    player.set_fullscreen(True) # set full screen
-    player.set_xwindow(videopanel.winfo_id())
-
-    player.set_mrl(path)    #setting the media in the mediaplayer object created
-    player.play()           # play the video
-    if path[-3:] == "mp4":  #check if its the scanner video
-        while player.get_state() != vlc.State.Ended : # loop until the video is finished
-            continue
-        return True
-    else : 
-        while True:
-            continue
-
-'''
-=========================================================================================================
 Variable init
 =========================================================================================================
 '''
-places = []
+places = [] 
 proof = []
 person_one = []
 person_two = []
@@ -164,17 +168,62 @@ class Check_pin(Thread):
         if currentMouseX < 1024:
             #print('POS is: {}, {} limitx'.format(currentMouseX, currentMouseY))
             pyautogui.moveTo(1024, currentMouseY)
+
+'''
+=========================================================================================================
+Tkinter classes
+=========================================================================================================
+'''
+class MyOptionMenu(tk.OptionMenu):
+    # Dropdown anpassen
+    def __init__(self, master, status, *options):
+        self.var = tk.StringVar(master)
+        self.var.set(status)
+        super().__init__(master, self.var, *options)
+        self.config(font=('calibri', (config['TKINTER']['font-size'])), bg='#E2E2E2', width=12)
+        self['menu'].config(font=('calibri', (config['TKINTER']['font-size'])), bg=config['TKINTER']['background-color'])
+
+'''
+=========================================================================================================
+VLC init
+=========================================================================================================
+'''
+def play_video(path):
+
+    '''
+    Description
+    -----------
+    Displaying the video once sensor is high
+    set the mrl of the video to the mediaplayer
+    play the video and
+
+    "mp4" = scanner video.mp4
+
+    '''
+    player.set_fullscreen(True) # set full screen
+    player.set_xwindow(videopanel.winfo_id())
+
+    player.set_mrl(path)    #setting the media in the mediaplayer object created
+    player.play()           # play the video
+    if path[-3:] == "mp4":  #check if its the scanner video
+        while player.get_state() != vlc.State.Ended : # loop until the video is finished
+            continue
+        return True
+    else : 
+        while True:
+            continue
+
 '''
 =========================================================================================================
 RFID functions
 =========================================================================================================
 '''
-def authenticate(uid, read_block):
+def authenticate(uid, read_block): #does the authentication if its a classic tag
     rc = 0
     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
     rc = pn532.mifare_classic_authenticate_block(
         uid, read_block, MIFARE_CMD_AUTH_A, key)
-    print(rc)
+   
     return rc
 
 def card_func(sample_var):
@@ -188,8 +237,7 @@ def card_func(sample_var):
 
     toplevel = tk.Toplevel()
 
-    # offset_x = 200 #random.randint(0, 200)
-    # offset_y = 400 #random.randint(0, 400)
+   
     x = root.winfo_x()
     y = root.winfo_y()
     str_geo = "+%d+%d" % (x, y)
@@ -197,12 +245,12 @@ def card_func(sample_var):
     toplevel.geometry(str_geo)
 
     toplevel.title("Scanning result")
-    FA_Bild = tk.PhotoImage(file = config['PATH']['image'] + 'fingerprints/' + cards_images.get(sample_var, cards_images["unk"]))
+    FA_Bild = tk.PhotoImage(file = config['PATH']['image'] + 'fingerprints/' + config["CARDS_IMAGES"].get(sample_var, config["CARDS_IMAGES"]["unk"]))
     FA_Label = tk.Label(toplevel, image=FA_Bild)
     FA_Label.image = FA_Bild
     FA_Label.grid()
 
-    #toplevel.attributes("-toolwindow",1)
+  
     toplevel.resizable(0, 0)  # will remove the top badge of window
     toplevel.lift(root)
     picture_popup = toplevel
@@ -215,6 +263,12 @@ def return_to_normal():
     ButtonScan["command"] = scan_field
 
 def scan_field():
+    
+    '''
+    scans the cards and checks whethers its a classic or ntag.
+    if the card is present and read correctly displays the fingerprint
+
+    '''
     global warning_popup
     global ButtonScan
     global window
@@ -224,7 +278,6 @@ def scan_field():
     except (AttributeError, NameError):
         warning_popup = None
     
-    #print(f'button state {ButtonScan["state"]}')
     if not chk_door.is_door_closed():
         popupmsg(
             "Close door", "Bitte schließen Sie die scannertür \n Please close the scanner door") 
@@ -243,73 +296,46 @@ def scan_field():
     
     start_time = time()
     count = 0
-    # Show scanning window
-    #player.set_xwindow(videopanel.winfo_id())
-    #player.play()  # hit the player button
+  
     play_video(config['PATH']['video'] + 'scannerfilm_mit_sound.mp4')
 
     # Found Solution
     success = False
     msg = ["Timeout!", "Beweismittel richtig einlegen \n Object not placed correctly"]
-    read_data = "XX"
+    
 
     uid = None
-    while chk_door.is_door_closed():
-        try:
-            uid = pn532.read_passive_target(timeout=0.5)
-        except RuntimeError:
-            sleep(0.2)
+    while chk_door.is_door_closed(): #check door is closed
+        
+        uid = rfid_present()
 
         print('.', end="")
         # Try again if no card is available.
-        if uid is None:
+        sleep(0.2)
+
+        if uid is None: # check if card is detected
+
             count += 1
             if count > 10:
                 print("Timeout! Failed to read")
                 break
-        else:
+
+        else: #card is found 
             print('Found card with UID:', [hex(i) for i in uid])
             break
 
     print("Out while")
 
-    if uid:
-        print('Card found')
-        try:
-            # if classic tag
-            auth = authenticate(uid, read_block)
-        except Exception:
-            # if ntag
-            auth = False
+    if uid: # ensure that the card is inside
 
-        try:
-            # Switch between ntag and classic
-            if auth:  # True for classic and False for ntags
-                data = pn532.mifare_classic_read_block(read_block)
-            else:
-                data = pn532.ntag2xx_read_block(read_block)
-
-            if data is not None:
-                read_data = data.decode('utf-8')[:2]
-            else:
-                print("None block")
-        except Exception as e:
-            print(e)
+        read_data = rfid_read(uid,config["BLOCK"]["read_block"])
 
         print('data is: {}'.format(read_data))
-        if read_data != "XX":
+        if read_data:
             success = True
         else:
             msg = [
                 "Fehler", "Beweismittel richtig einlegen - Object not placed correctly"]
-
-    # wait video before showing results
-    #while chk_door.is_door_closed() and (time() - start_time) < 10:
-       # pass
-
-    # end video
-    #print("--- %s seconds ---" % (time() - start_time))
-    #player.stop()
     
     # activate button again
     ButtonScan["state"] = tk.ACTIVE
@@ -324,20 +350,52 @@ def scan_field():
     window.update()
     return uid
 
+def rfid_read(uid, block):
 
-'''
-=========================================================================================================
-Tkinter classes
-=========================================================================================================
-'''
-class MyOptionMenu(tk.OptionMenu):
-    # Dropdown anpassen
-    def __init__(self, master, status, *options):
-        self.var = tk.StringVar(master)
-        self.var.set(status)
-        super().__init__(master, self.var, *options)
-        self.config(font=('calibri', (config['TKINTER']['font-size'])), bg='#E2E2E2', width=12)
-        self['menu'].config(font=('calibri', (config['TKINTER']['font-size'])), bg=config['TKINTER']['background-color'])
+    '''
+    Checks if the card is read or not 
+    '''
+
+    try:
+        # if classic tag
+        auth = authenticate(uid, block)
+    except Exception:
+        # if ntag
+        auth = False
+
+    try:
+        # Switch between ntag and classic
+        if auth:  # True for classic and False for ntags
+            data = pn532.mifare_classic_read_block(block)
+        else:
+            data = pn532.ntag2xx_read_block(block)
+
+        if data is not None:
+            read_data = data.decode('utf-8')[:2]
+            
+        else:
+            read_data = False
+            print("None block")
+
+    except Exception as e:
+        print(e)
+
+    return read_data
+
+
+def rfid_present():
+
+    '''
+    checks if the card is present inside the box
+    '''
+    try:
+        uid = pn532.read_passive_target(timeout=0.5) #read the card
+    except RuntimeError:
+        uid = None
+        return uid 
+    return uid
+
+
 
 '''
 =========================================================================================================
@@ -359,18 +417,13 @@ def reset_mouse(event):
 
 
 def popupmsg(ttl, msg):
-    global warning_popup
+    
 
     try:
         warning_popup.destroy()
     except (AttributeError, NameError):
         warning_popup = None
 
-    #popup.wm_title(ttl)
-    # keeps popup above everything until closed.
-    # popup.wm_attributes('-topmost', True)
-    # this is outter background colour
-    #popup.configure(background='#4a4a4a')
     top = tk.Toplevel(root)
     top.details_expanded = False
     top.title(ttl)
@@ -395,6 +448,10 @@ def popupmsg(ttl, msg):
 
 def check_language(event=0):
     
+    '''
+    Displays the pictures based on whether its german or english
+    '''
+    
     if check_proof() == 1 and check_person1() == 1 and check_person2() == 1 and check_toxic() == 1:
         toplevel = tk.Toplevel()
         Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/{language}/accepted.png')
@@ -415,6 +472,10 @@ def check_language(event=0):
         Richter_Label.image = Richter_Bild
 
 def check_proof():
+
+    '''
+    compares the entered proofs by th user with the correct ones
+    '''
 
     list_proof = proof[1:]
     proof_check = [(p.var).get() for p in list_proof]
@@ -446,6 +507,10 @@ def check_proof():
 
 def check_person1():
 
+    '''
+    compares the entered person1 data by th user with the correct ones
+    '''
+
     list_person_one = person_one[1:]
     person1_check = [(p.var).get() for p in list_person_one]
 
@@ -474,6 +539,10 @@ def check_person1():
 
 def check_person2():
 
+    '''
+    compares the entered person 2 data by th user with the correct ones
+    '''
+
     list_person_two = person_two[1:]
     person2_check = [(p.var).get() for p in list_person_two]
 
@@ -494,6 +563,11 @@ def check_person2():
 
 
 def check_toxic():
+
+    '''
+    compares the entered toxic data by th user with the correct ones
+    '''
+
     list_toxic = toxicity[1:]
     toxic_check = [(p.var).get() for p in list_toxic]
 
@@ -542,15 +616,11 @@ def select_deu():
 
 
 def evidence_collection():
+
     frame_language.grid_forget()
     label_headline.grid_forget()
     button_deu.grid_forget()
     button_eng.grid_forget()
-
-    # bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
-    # label_background_eng.configure(image=bg_image_en)
-    # label_background_eng.image=bg_image_en
-    # label_background_eng.place(x=0, y=0)
 
     frame_login.grid(row=1, column=1)
     
@@ -575,14 +645,11 @@ def evidence_collection():
     init_dropdown(toxicity, texts['all'][language]['head_toxicity'], texts['all'][language]['dropdown_toxicity'])
     for i in range(0, len(toxicity)):
         toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-    
-    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
 
     if language == texts[city]["deu"] :
         ButtonSendGer.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)    
     else:
         ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)
-    
     
     ButtonScan["state"] = tk.NORMAL   # Activate scanning ability
 
@@ -597,85 +664,54 @@ def init_dropdown(_list, text_head, text_dropdown):
 "MAIN"
 =========================================================================================================
 '''
-root = tk.Tk()
-root.title("Fingerprint scanner")
-scrW = root.winfo_screenwidth()
-scrH = root.winfo_screenheight()
-geo_str = str(scrW) + "x" + str(scrH)
+def main():
 
-# We will create two screens: one for the interface, one for laser scanner
-# small screen root
-top2 = tk.Toplevel(root, bg='#000000')
-top2.geometry("+0+0")
-top2.attributes('-fullscreen', tk.TRUE)
-top2.wm_attributes("-topmost", 1)  # make sure window is on top to start
+    root.title("Fingerprint scanner")
+    geo_str = str(scrW) + "x" + str(scrH)
 
-# big screen
-window = root
-root.option_add('*Dialog.msg.width', 34)
-print("Geo str: " + geo_str)
-window.geometry(geo_str)
-window.title("Forensik Hamburg")
-window.grid_rowconfigure(0, weight=1)
-window.grid_rowconfigure(2, weight=1)
-window.grid_columnconfigure(0, weight=1)
-window.grid_columnconfigure(2, weight=1)
-# window.wm_attributes("-topmost", 1)  # make sure window is on top to start
-window.configure(background=config['TKINTER']['background-color'])
-window.attributes('-fullscreen', True)
+    # We will create two screens: one for the interface, one for laser scanner
+    # small screen root
 
-sleep(1)
+    top2.geometry("+0+0")
+    top2.attributes('-fullscreen', tk.TRUE)
+    top2.wm_attributes("-topmost", 1)  # make sure window is on top to start
+    top2.config(cursor="none")
+    # big screen
 
-# ------------------------ Frame ----------------------------------
-frame_login = tk.Frame(window, bg=config['TKINTER']['background-color'], bd=0, height=700, width=1620)
-frame_language = tk.Frame(window, bg=config['TKINTER']['background-color'], bd=200, height=700, width=700)
+    root.option_add('*Dialog.msg.width', 34)
+    print("Geo str: " + geo_str)
+    window.geometry(geo_str)
+    window.title("Forensik Hamburg")
+    window.grid_rowconfigure(0, weight=1)
+    window.grid_rowconfigure(2, weight=1)
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(2, weight=1)
+    window.configure(background=config['TKINTER']['background-color'])
+    window.attributes('-fullscreen', True)
+    
+    
+    ButtonScan["state"] = tk.DISABLED   # Disable scanning ability
 
-
-# ------------------------ Images ---------------------------------
-bg_image_de = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/deu/background.png')
-bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
-flag_deu = tk.PhotoImage(file = config['PATH']['image'] + 'deu.png')
-flag_eng = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
-
-# ------------------------ Label ----------------------------------
-label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
-label_background_deu = tk.Label(window, image=bg_image_de)
-label_background_eng = tk.Label(window, image=bg_image_en)
-label_background_eng = tk.Label(window, bg='#FFFFFF')
-label_flag_deu = tk.Label(frame_language, image=flag_deu)
-label_flag_eng = tk.Label(frame_language, image=flag_eng)
-label_text_deu = tk.Label(frame_language, text="Deutsch", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
-label_text_eng = tk.Label(frame_language, text="English", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
-
-
-# ------------------------ Buttons ------------------------
-ButtonScan = tk.Button(frame_login, text="SCAN", font="HELVETICA 18 bold", command=scan_field, bg='#BB3030', fg='#E0E0E0')
-ButtonScan.config(activebackground='#FF5050')
-ButtonScan["state"] = tk.DISABLED   # Disable scanning ability
-ButtonSendGer = tk.Button(frame_login, text="Absenden", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
-ButtonSendEn = tk.Button(frame_login, text="Submit", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
-button_deu = tk.Button(frame_language, image=flag_deu, command=lambda: select_deu())
-button_eng = tk.Button(frame_language, image=flag_eng, command=lambda: select_eng())
-
-
-
-
-landingpage()
+    sleep(1)
+    
+    landingpage()
+    
 
 # Mainloop
 
 if __name__ == "__main__":
-    pyautogui.FAILSAFE = False
-    top2.config(cursor="none")
 
-    warning_popup = None
-    picture_popup = None
+    ButtonSendGer = tk.Button(frame_login, text="Absenden", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
+    ButtonSendEn = tk.Button(frame_login, text="Submit", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
+    ButtonScan = tk.Button(frame_login, text="SCAN", font="HELVETICA 18 bold", command=scan_field, bg='#BB3030', fg='#E0E0E0')
+    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
+    ButtonScan.config(activebackground='#FF5050')
 
     chk_door = Check_pin(config['PIN'][city]['door'])
     c1 = Thread(target=chk_door.checkloop)
     c1.start()
-
-    videopanel = tk.Frame(top2)
     canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0, relief='ridge').pack(fill=tk.BOTH, expand=1)
     videopanel.pack(fill=tk.BOTH, expand=1)
+
+    main()
     window.mainloop()
