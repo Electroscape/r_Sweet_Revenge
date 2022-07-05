@@ -13,7 +13,7 @@ argparser = argparse.ArgumentParser(
 argparser.add_argument(
     '-c',
     '--city',
-    help='name of the city: [hh / s]')
+    help='name of the city: [hh / st]')
 
 args = argparser.parse_args()
 
