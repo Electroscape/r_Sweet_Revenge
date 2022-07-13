@@ -1,0 +1,30 @@
+{
+    "PATH": {
+        "image": "img/",
+        "video": "vid/"
+    },
+    "BLOCK" :{
+        "read_block" : 4
+    },
+    "CARDS":{
+        "poisoned_cards": ["PVM", "PSV"],
+        "non_poisoned_cards": ["PVM", "PSV"]
+    },
+    "PIN":{
+
+        "hh":{
+            "UV_light_pin": 4,
+            "UV_LIGHT_ON" : true,
+            "UV_LIGHT_OFF":false
+        },
+
+        "st":{
+            "UV_light_pin": 4,
+            "UV_LIGHT_ON" : true,
+            "UV_LIGHT_OFF":false
+        }
+
+    }
+
+
+}

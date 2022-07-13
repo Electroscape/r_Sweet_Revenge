@@ -1,22 +1,65 @@
-from time import sleep
-import os
-from subprocess import Popen, PIPE, DEVNULL
-
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)
-
+import argparse
 import board
 import busio
-from digitalio import DigitalInOut
+import json
+import RPi.GPIO as GPIO
+import vlc
 
 from adafruit_pn532.i2c import PN532_I2C
+from digitalio import DigitalInOut
+from subprocess import Popen, PIPE, DEVNULL
+from time import sleep
 
-vid_command = 'cvlc {0}/{1} -f --no-osd --loop &'
+'''
+=========================================================================================================
+Argument parser
+=========================================================================================================
+'''
 
+argparser = argparse.ArgumentParser(
+    description='Microscope')
+
+argparser.add_argument(
+    '-c',
+    '--city',
+    help='name of the city: [hh / st]')
+
+city = argparser.parse_args().city
+
+
+'''
+=========================================================================================================
+Load config
+=========================================================================================================
+'''
+with open('src/config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+'''
+=========================================================================================================
+Global VLC variables
+=========================================================================================================
+'''
+player = vlc.Instance('--input-repeat=9999')
+
+'''
+=========================================================================================================
+set UV LIGHT variables
+=========================================================================================================
+'''
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(config["PIN"][city]["UV_light_pin"], GPIO.OUT)
+GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_OFF"]) 
+
+'''
+=========================================================================================================
+PN532 init
+=========================================================================================================
+'''
 # I2C connection:
 i2c = busio.I2C(board.SCL, board.SDA)
 
-# keep trying to initialise the sensor
 while True:
     try:
         # Non-hardware reset/request with I2C
@@ -27,109 +70,122 @@ while True:
     except:
         print("failed to start RFID")
         sleep(1)
+        
+pn532.SAM_configuration() # Configure PN532 to communicate with MiFare cards
 
-# this delay avoids some problems after wakeup
-sleep(0.5)
+'''
+=========================================================================================================
+VLC init
+=========================================================================================================
+'''
 
-# Configure PN532 to communicate with MiFare cards
-pn532.SAM_configuration()
+def play_video(path):
 
-non_poisoned_cards = ['PSB', 'PDT', 'PZK', 'PTB']
-poisoned_cards = ['PVM', 'PSV']
-read_block = 4
-UV_light_pin = 4
+    '''
+    Description
+    -----------
+    Displaying the video once sensor is high
+    set the mrl of the video to the mediaplayer
+    play the video and
 
-UV_LIGHT_ON = GPIO.HIGH
-UV_LIGHT_OFF = GPIO.LOW
+    '''
+    
+    media = player.media_new(path)
+    media_player = player.media_player_new()
+    media_player.set_media(media)
+    #media_player.set_fullscreen(True)
+    media_player.play()
 
-GPIO.setup(UV_light_pin, GPIO.OUT)
-GPIO.output(UV_light_pin, UV_LIGHT_OFF) 
+'''
+=========================================================================================================
+RFID functions
+=========================================================================================================
+'''
 
-def wait_remove_card(uid):
-    while uid:
-        # print('Same Card Still there')
-        # sleep(0.01)
-        try:
-            uid = pn532.read_passive_target()
-        except RuntimeError:
-            uid = None
+def rfid_read(read_block):
+    try:
+        data = pn532.ntag2xx_read_block(read_block)
+        print('Card found')
+    except Exception:
+        data = b"XX"
+
+    try:
+        read_data = data.decode('utf-8')[:3]
+    except Exception as e:
+        print(e)
+        read_data = "XXX"
+
+    print('data is: {}'.format(read_data))
+    return read_data
 
 
-def scan_field():
-    while True:
-        try:
-            uid = pn532.read_passive_target()
-        except RuntimeError:
-            uid = None
-            # sleep(0.01)
-
-        # print('.', end="") if count <= 3 else print("", end="\r")
-        # Try again if no card is available.
-        if uid:
-            print('Found card')
-            break
+def rfid_present():
+    '''
+    checks if the card is present inside the box
+    '''
+    try:
+        uid = pn532.read_passive_target(timeout=0.5) #read the card
+    except RuntimeError:
+        uid = None
 
     return uid
 
 
+'''
+=========================================================================================================
+"MAIN"
+=========================================================================================================
+'''
 def main():
 
     print('Welcome to Poison Scanner')
     
     # First of all play terminal ready video
-    os.system(vid_command.format("vid", "default.MOV"))
+    play_video(config['PATH']['video'] + "/default.mov")
 
     print('Waiting Card')
 
     while True:
-        uid = scan_field()
 
-        if uid:
-            GPIO.output(UV_light_pin, UV_LIGHT_ON)
-            try:
-                data = pn532.ntag2xx_read_block(read_block)
-                print('Card found')
-            except Exception:
-                data = b"XX"
+        if rfid_present():
 
-            try:
-                read_data = data.decode('utf-8')[:3]
-            except Exception as e:
-                print(e)
-                read_data = "XXX"
+            uid = rfid_present()
 
-            print('data is: {}'.format(read_data))
+            GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_ON"])
             
-            if read_data in poisoned_cards + non_poisoned_cards:
+            read_data = rfid_read(config["BLOCK"]["read_block"])
+            
+            if read_data in config["CARDS"]["poisoned_cards"] + config["CARDS"]["non_poisoned_cards"]:
                 pass
             else:
                 print('Wrong Card')
-                os.system("sudo pkill vlc")
-                os.system(vid_command.format("vid", "try_again.mov"))
+                play_video(config['PATH']['video'] + "/try_again.mov")
 
-            if read_data in poisoned_cards: 
-                os.system("sudo pkill vlc")
-                os.system(vid_command.format("vid", 'scanner_toxic_sound.mp4'))
+            if read_data in config["CARDS"]["poisoned_cards"]: 
+              
+                play_video(config['PATH']['video'] + "/scanner_toxic_sound.mp4")
                 # video is 18 seconds
                 sleep(18)
                 print('Poisoned card')
-                os.system("sudo pkill vlc")
-                os.system(vid_command.format("img", 'toxic.png'))
-            elif read_data in non_poisoned_cards:
-                os.system("sudo pkill vlc")
-                os.system(vid_command.format("vid", 'scanner_nontoxic_sound.mp4'))
-                # video is 7 seconds
-                sleep(18)
-                print('Clean Card')
-                os.system("sudo pkill vlc")
-                os.system(vid_command.format("img", 'nontoxic.png'))
+                
+                play_video(config['PATH']['image']  + city +  "/toxic.png")
 
-            #os.system("sudo pkill omxplayer")
-            wait_remove_card(uid)
+            elif read_data in config["CARDS"]["non_poisoned_cards"]:
+
+                play_video(config['PATH']['video'] + "/scanner_nontoxic_sound.mp4")
+
+                print('Clean Card')
+
+                play_video(config['PATH']['image']  + city +  "/nontoxic.png")
+
+  
+            while rfid_present():
+                 continue
+
             print("Card Removed")
-            GPIO.output(UV_light_pin, UV_LIGHT_OFF) 
-            os.system("sudo pkill vlc")
-            os.system(vid_command.format("vid", "default.MOV"))
+
+            GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_OFF"]) 
+            play_video(config['PATH']['video'] + "/default.mov")
 
 
 if __name__ == "__main__":
