@@ -1,6 +1,7 @@
 import argparse
 import board
 import busio
+import gc
 import json
 import RPi.GPIO as GPIO
 import vlc
@@ -40,7 +41,8 @@ with open('src/config.json', 'r') as config_file:
 Global VLC variables
 =========================================================================================================
 '''
-player = vlc.Instance('--input-repeat=9999')
+vlc_instance = vlc.Instance() # creating Instance class object
+player = vlc_instance.media_player_new() # creating a new media object
 
 '''
 =========================================================================================================
@@ -89,13 +91,9 @@ def play_video(path):
     play the video and
 
     '''
-    
-    media = player.media_new(path)
-    media_player = player.media_player_new()
-    media_player.set_media(media)
-    #media_player.set_fullscreen(True)
-    media_player.play()
-
+    player.set_fullscreen(True) # set full screen
+    player.set_mrl(path)    #setting the media in the mediaplayer object created
+    player.play()           # play the video
 '''
 =========================================================================================================
 RFID functions
@@ -139,13 +137,17 @@ def rfid_present():
 def main():
 
     print('Welcome to Poison Scanner')
-    
-    # First of all play terminal ready video
-    play_video(config['PATH']['video'] + "/default.mov")
+
+    pdv = True #play default video
 
     print('Waiting Card')
 
     while True:
+        gc.collect()
+        if player.get_state() == vlc.State.Ended or pdv==True:
+
+            play_video(config['PATH']['video'] + "/default.mov")
+            pdv = False
 
         if rfid_present():
 
@@ -164,19 +166,13 @@ def main():
             if read_data in config["CARDS"]["poisoned_cards"]: 
               
                 play_video(config['PATH']['video'] + "/scanner_toxic_sound.mp4")
-                # video is 18 seconds
-                sleep(18)
                 print('Poisoned card')
-                
-                play_video(config['PATH']['image']  + city +  "/toxic.png")
 
             elif read_data in config["CARDS"]["non_poisoned_cards"]:
 
                 play_video(config['PATH']['video'] + "/scanner_nontoxic_sound.mp4")
 
-                print('Clean Card')
-
-                play_video(config['PATH']['image']  + city +  "/nontoxic.png")
+                print('Non poisoned card')
 
   
             while rfid_present():
@@ -185,7 +181,7 @@ def main():
             print("Card Removed")
 
             GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_OFF"]) 
-            play_video(config['PATH']['video'] + "/default.mov")
+            pdv = True
 
 
 if __name__ == "__main__":
