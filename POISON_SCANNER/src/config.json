@@ -8,7 +8,7 @@
     },
     "CARDS":{
         "poisoned_cards": ["PVM", "PSV"],
-        "non_poisoned_cards": ["PVM", "PSV"]
+        "non_poisoned_cards": ["PZK", "PSB","PDT","PTB"]
     },
     "PIN":{
 
