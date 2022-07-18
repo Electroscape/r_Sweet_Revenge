@@ -18,7 +18,7 @@ Argument parser
 '''
 
 argparser = argparse.ArgumentParser(
-    description='Microscope')
+    description='Poison-Scanner')
 
 argparser.add_argument(
     '-c',
