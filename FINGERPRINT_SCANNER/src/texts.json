@@ -1,0 +1,57 @@
+{
+    "all": {
+        "deu": {
+            "dropdown_std": "- Auswahl -",
+            "dropdown_person_1": ["- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise"],
+            "dropdown_person_2": ["- kein -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise", "Unbekannt"],
+            "dropdown_toxicity": ["Keine Probe", "Toxisch", "Nicht toxisch"],
+            "head_place": "Fundort",
+            "head_object": "Objekt",
+            "head_person_1": "Fingerabdruck 1",
+            "head_person_2": "Fingerabdruck 2",
+            "head_toxicity": "Toxizität"
+        },
+        "eng": {
+            "dropdown_std": "- select -",
+            "dropdown_person_1": ["- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise"],
+            "dropdown_person_2": ["- none -", "Eva", "Jakob", "Janine", "Jessica", "Johannes", "Julius", "Luise", "unknown"],
+            "dropdown_toxicity": ["no sample", "toxic", "non toxic"],
+            "head_place": "Location",
+            "head_object": "Object",
+            "head_person_1": "1st fingerprint",
+            "head_person_2": "2nd fingerprint",
+            "head_toxicity": "Toxicity"
+        }
+    },
+    "hh": {
+        "deu": {
+            "dropdown_objects": ["Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Donut", "Zucker"],
+            "check_beweismittel_richtig" : ["Becher" , "Zucker" , "Süßstoff" , "Tabletten", "Reiseführer" ,"Donut", "Kuli" ],
+            "check_beweismittel_fast_richtig" : ["Becher" , "Zucker" , "Süßstoff" , "Tabletten","Donut", "Reiseführer" , "Kuli" ],
+            "check_deu_person1_richtig" : ["Eva","Janine","Jessica","Luise","Johannes","Jakob","Jessica"],
+            "check_deu_person1_fast_richtig" : ["Eva","Janine","Jessica","Luise","Jakob","Johannes","Jessica"],
+            "check_deu_person2_richtig" : ["Julius","- kein -","Unbekannt","- kein -","Unbekannt","Unbekannt","- kein -"],
+            "check_toxisch_richtig" : ["Toxisch", "Nicht toxisch" , "Nicht toxisch" ,"Nicht toxisch" ,"Keine Probe","Nicht toxisch","Keine Probe"],
+            "check_toxisch_fast_richtig" : ["Toxisch", "Nicht toxisch" , "Nicht toxisch" ,"Nicht toxisch" ,"Nicht toxisch","Keine Probe","Keine Probe"]
+        },
+        "eng": {
+            "dropdown_objects": ["Cup", "Donut", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener"],
+            "proof_correct" : ["Cup", "Sugar", "Sweetener", "Pills", "Guidebook", "Donut", "Pen"],
+            "proof_almost_correct" : ["Cup", "Sugar", "Sweetener", "Pills", "Donut", "Guidebook", "Pen"],
+            "check_en_person1_correct" : ["Eva","Janine","Jessica","Luise","Johannes","Jakob","Jessica"],
+            "check_en_person1_almost_correct" : ["Eva","Janine","Jessica","Luise","Jakob","Johannes","Jessica"],
+            "check_en_person2_correct" : ["Julius","- none -","unknown","- none -","unknown","unknown","- none -"],
+            "check_toxic_correct" : ["toxic","non toxic","non toxic","non toxic","no sample","non toxic","no sample"],
+            "check_toxic_almost_correct" : ["toxic","non toxic","non toxic","non toxic","non toxic","no sample","no sample"]
+        }
+    },
+    "st": {
+        "deu": {
+            "dropdown_objects": ["Becher", "Kuli", "Reiseführer", "Süßstoff", "Tabletten", "Zigaretten", "Zucker"]
+        },
+        "eng": {
+            "dropdown_objects": ["Cigarettes", "Cup", "Guidebook", "Pen", "Pills", "Sugar", "Sweetener"]
+        }
+    }
+    
+}
