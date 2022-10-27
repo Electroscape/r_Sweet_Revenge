@@ -59,8 +59,18 @@ root = tk.Tk()
 scrW = root.winfo_screenwidth()
 scrH = root.winfo_screenheight()
 top2 = tk.Toplevel(root, bg='#000000')
+geo_str = str(scrW) + "x" + str(scrH)
 window = root
-videopanel = tk.Frame(top2)
+window.geometry(geo_str)
+window.title("Forensik Hamburg")
+window.grid_rowconfigure(0, weight=1)
+window.grid_rowconfigure(2, weight=1)
+window.grid_columnconfigure(0, weight=1)
+window.grid_columnconfigure(2, weight=1)
+window.configure(background=config['TKINTER']['background-color'])
+window.attributes('-fullscreen', True)
+
+
 pyautogui.FAILSAFE = False
 warning_popup = None
 picture_popup = None
@@ -79,7 +89,7 @@ flag_eng = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
 label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
 label_background_deu = tk.Label(window, image=bg_image_de)
 label_background_eng = tk.Label(window, image=bg_image_en)
-label_background_eng = tk.Label(window, bg='#FFFFFF')
+#label_background_eng = tk.Label(frame_login, bg='#FFFFFF')
 label_flag_deu = tk.Label(frame_language, image=flag_deu)
 label_flag_eng = tk.Label(frame_language, image=flag_eng)
 label_text_deu = tk.Label(frame_language, text="Deutsch", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
@@ -606,13 +616,19 @@ def landingpage():
 def select_eng():
     global language
     language = 'eng'
+    label_background_eng.place(x=0,y=0)
+    label_background_eng.lower()
     evidence_collection()
 
 
 def select_deu():
     global language
     language = 'deu'
+    label_background_deu.place(x=0,y=0)
+    label_background_deu.lower()
     evidence_collection()
+    
+    
 
 
 def evidence_collection():
@@ -621,13 +637,15 @@ def evidence_collection():
     label_headline.grid_forget()
     button_deu.grid_forget()
     button_eng.grid_forget()
-
-    frame_login.grid(row=1, column=1)
     
+    
+    frame_login.grid(column=1,row=1)
+    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
+
     places.append(tk.Label(frame_login, text=texts['all'][language]['head_place'], bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
     for i in range(1, 8):
         places.append(tk.Label(frame_login, text=i, bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold"))
-    for i in range(0, len(places)):
+    for i in range(0,len(places)):
         places[i].grid(row=i, sticky=W+E, padx=config['TKINTER']['tabpadx'])
 
     init_dropdown(proof, texts['all'][language]['head_object'], texts[city][language]['dropdown_objects'])
@@ -636,28 +654,26 @@ def evidence_collection():
 
     init_dropdown(person_one, texts['all'][language]['head_person_1'], texts['all'][language]['dropdown_person_1'])
     for i in range(0, len(person_one)):
-        person_one[i].grid(row=i, column=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-
+        person_one[i].grid(row=i, column=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])  
     init_dropdown(person_two, texts['all'][language]['head_person_2'], texts['all'][language]['dropdown_person_2'])
     for i in range(0, len(person_two)):
-        person_two[i].grid(row=i, column=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-
+        person_two[i].grid(row=i, column=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])  
     init_dropdown(toxicity, texts['all'][language]['head_toxicity'], texts['all'][language]['dropdown_toxicity'])
     for i in range(0, len(toxicity)):
-        toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])
-
+        toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])    
     if language == texts[city]["deu"] :
         ButtonSendGer.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)    
     else:
-        ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)
-    
+        ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)    
     ButtonScan["state"] = tk.NORMAL   # Activate scanning ability
+    
 
 
 def init_dropdown(_list, text_head, text_dropdown):
     _list.append(tk.Label(frame_login, text=text_head, bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
     for i in range(1, 8):
         _list.append(MyOptionMenu(frame_login, texts['all'][language]['dropdown_std'], *text_dropdown))
+
     
 '''
 =========================================================================================================
@@ -667,7 +683,6 @@ def init_dropdown(_list, text_head, text_dropdown):
 def main():
 
     root.title("Fingerprint scanner")
-    geo_str = str(scrW) + "x" + str(scrH)
 
     # We will create two screens: one for the interface, one for laser scanner
     # small screen root
@@ -680,14 +695,7 @@ def main():
 
     root.option_add('*Dialog.msg.width', 34)
     print("Geo str: " + geo_str)
-    window.geometry(geo_str)
-    window.title("Forensik Hamburg")
-    window.grid_rowconfigure(0, weight=1)
-    window.grid_rowconfigure(2, weight=1)
-    window.grid_columnconfigure(0, weight=1)
-    window.grid_columnconfigure(2, weight=1)
-    window.configure(background=config['TKINTER']['background-color'])
-    window.attributes('-fullscreen', True)
+    
     
     
     ButtonScan["state"] = tk.DISABLED   # Disable scanning ability
@@ -704,14 +712,15 @@ if __name__ == "__main__":
     ButtonSendGer = tk.Button(frame_login, text="Absenden", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
     ButtonSendEn = tk.Button(frame_login, text="Submit", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
     ButtonScan = tk.Button(frame_login, text="SCAN", font="HELVETICA 18 bold", command=scan_field, bg='#BB3030', fg='#E0E0E0')
-    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
     ButtonScan.config(activebackground='#FF5050')
 
     chk_door = Check_pin(config['PIN'][city]['door'])
     c1 = Thread(target=chk_door.checkloop)
     c1.start()
+    videopanel = tk.Frame(top2)
     canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0, relief='ridge').pack(fill=tk.BOTH, expand=1)
     videopanel.pack(fill=tk.BOTH, expand=1)
+    
 
     main()
     window.mainloop()
