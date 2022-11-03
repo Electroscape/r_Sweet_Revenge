@@ -106,7 +106,7 @@ Global VLC variables
 =========================================================================================================
 '''
 
-vlc_instance = vlc.Instance( ) # creating Instance class object
+vlc_instance = vlc.Instance("--no-xlib") # creating Instance class object
 player = vlc_instance.media_player_new() # creating a new media object
 
 
@@ -166,7 +166,7 @@ class Check_pin(Thread):
                 self.status = bool(GPIO.input(self.pin))
                 if self.status:
                     print("door: locked")
-                    scan_field()
+                    #scan_field()
                 else:
                     print("door: unlocked")
 
@@ -210,7 +210,7 @@ def play_video(path):
     "mp4" = scanner video.mp4
 
     '''
-    player.set_fullscreen(True) # set full screen
+    #player.set_fullscreen(True) # set full screen
     player.set_xwindow(videopanel.winfo_id())
 
     player.set_mrl(path)    #setting the media in the mediaplayer object created
@@ -294,6 +294,7 @@ def scan_field():
         return -1
 
     if ButtonScan["state"] == tk.DISABLED :
+        
         return -1
     else:
         print(f'btn state: {ButtonScan["state"]}')
@@ -316,9 +317,10 @@ def scan_field():
 
     uid = None
     while chk_door.is_door_closed(): #check door is closed
+    
         
         uid = rfid_present()
-
+        
         print('.', end="")
         # Try again if no card is available.
         sleep(0.2)
@@ -326,7 +328,9 @@ def scan_field():
         if uid is None: # check if card is detected
 
             count += 1
+            print("in")
             if count > 10:
+                
                 print("Timeout! Failed to read")
                 break
 
@@ -457,7 +461,7 @@ def popupmsg(ttl, msg):
 
 
 def check_language(event=0):
-    
+
     '''
     Displays the pictures based on whether its german or english
     '''
@@ -490,18 +494,20 @@ def check_proof():
     list_proof = proof[1:]
     proof_check = [(p.var).get() for p in list_proof]
 
-    if language == texts[city]["deu"]:
-
+    if language == "deu":
+       
         if texts[city]["deu"]["check_beweismittel_richtig"] == proof_check:
+            
             var_proof =1 
     
         elif texts[city]["deu"]["check_beweismittel_fast_richtig"] == proof_check:
+        
             var_proof = 2
         else :
             var_proof = 0
 
     else:
-
+       
         if texts[city]["eng"]["proof_correct"] == proof_check:
             
             var_proof = 1
@@ -511,7 +517,7 @@ def check_proof():
 
         else :
             var_proof = 0
-    
+
     return var_proof
 
 
@@ -524,10 +530,11 @@ def check_person1():
     list_person_one = person_one[1:]
     person1_check = [(p.var).get() for p in list_person_one]
 
-    if language == texts[city]["deu"]:
-   
+    if language == "deu":
+        
         if texts[city]["deu"]["check_deu_person1_richtig"] == person1_check:
             var_person1 = 1
+            
 
         elif texts[city]["deu"]["check_deu_person1_fast_richtig"] == person1_check:
             var_person1 = 2
@@ -536,6 +543,7 @@ def check_person1():
        
 
     else :
+     
         if texts[city]["eng"]["check_en_person1_correct"] == person1_check:
             var_person1 = 1
     
@@ -543,7 +551,7 @@ def check_person1():
             var_person1 = 2
         else :
             var_person1 = 0
-
+ 
     return var_person1
         
 
@@ -556,9 +564,10 @@ def check_person2():
     list_person_two = person_two[1:]
     person2_check = [(p.var).get() for p in list_person_two]
 
-    if language == texts[city]["deu"]:
-
+    if language == "deu":
+     
         if texts[city]["deu"]["check_deu_person2_richtig"] == person2_check:
+            
             var_person2 = 1
         else :
             var_person2 = 0
@@ -568,7 +577,7 @@ def check_person2():
             var_person2 = 1
         else :
             var_person2 = 0
-
+  
     return var_person2
 
 
@@ -581,17 +590,18 @@ def check_toxic():
     list_toxic = toxicity[1:]
     toxic_check = [(p.var).get() for p in list_toxic]
 
-    if language == texts[city]["deu"]:
-
+    if language == "deu":
+        
          if texts[city]["deu"]["check_toxisch_richtig"] == toxic_check:
-            var_toxisch = 1
-
+            var_toxic = 1
+           
          elif texts[city]["deu"]["check_toxisch_fast_richtig"] == toxic_check:
-            var_toxisch = 2
+            var_toxic = 2
          else :
-            var_toxisch = 0
+            var_toxic  = 0
    
     else :  
+    
         if texts[city]["eng"]["check_toxic_correct"] == toxic_check:
             var_toxic = 1
 
@@ -599,7 +609,7 @@ def check_toxic():
             var_toxic = 2
         else :
             var_toxic = 0
-
+    
     return var_toxic
 
 
@@ -655,16 +665,20 @@ def evidence_collection():
     init_dropdown(person_one, texts['all'][language]['head_person_1'], texts['all'][language]['dropdown_person_1'])
     for i in range(0, len(person_one)):
         person_one[i].grid(row=i, column=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])  
+
     init_dropdown(person_two, texts['all'][language]['head_person_2'], texts['all'][language]['dropdown_person_2'])
     for i in range(0, len(person_two)):
         person_two[i].grid(row=i, column=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])  
+
     init_dropdown(toxicity, texts['all'][language]['head_toxicity'], texts['all'][language]['dropdown_toxicity'])
     for i in range(0, len(toxicity)):
-        toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])    
-    if language == texts[city]["deu"] :
+        toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])   
+
+    if language == "deu" :
         ButtonSendGer.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)    
     else:
-        ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)    
+        ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)  
+
     ButtonScan["state"] = tk.NORMAL   # Activate scanning ability
     
 
