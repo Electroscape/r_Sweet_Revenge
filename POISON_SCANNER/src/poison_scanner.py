@@ -13,7 +13,7 @@ from time import sleep
 
 '''
 =========================================================================================================
-Argument parser
+configs
 =========================================================================================================
 '''
 
@@ -28,77 +28,57 @@ argparser.add_argument(
 city = argparser.parse_args().city
 
 
-'''
-=========================================================================================================
-Load config
-=========================================================================================================
-'''
 with open('src/config.json', 'r') as config_file:
     config = json.load(config_file)
 
-'''
-=========================================================================================================
-Global VLC variables
-=========================================================================================================
-'''
-vlc_instance = vlc.Instance() # creating Instance class object
-player = vlc_instance.media_player_new() # creating a new media object
 
-'''
-=========================================================================================================
-set UV LIGHT variables
-=========================================================================================================
-'''
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(config["PIN"][city]["UV_light_pin"], GPIO.OUT)
-GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_OFF"]) 
-
-'''
-=========================================================================================================
-PN532 init
-=========================================================================================================
-'''
-# I2C connection:
 i2c = busio.I2C(board.SCL, board.SDA)
+global pn532
 
-while True:
-    try:
-        # Non-hardware reset/request with I2C
-        pn532 = PN532_I2C(i2c, debug=False)
-        ic, ver, rev, support = pn532.firmware_version
-        print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
-        break
-    except:
-        print("failed to start RFID")
-        sleep(1)
-        
-pn532.SAM_configuration() # Configure PN532 to communicate with MiFare cards
+
+def light_setup():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(config["PIN"][city]["UV_light_pin"], GPIO.OUT)
+    GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_OFF"])
+
 
 '''
 =========================================================================================================
-VLC init
+video fncs
 =========================================================================================================
 '''
+
+vlc_instance = vlc.Instance()  # creating Instance class object
+player = vlc_instance.media_player_new()  # creating a new media object
+
 
 def play_video(path):
-
-    '''
-    Description
-    -----------
-    Displaying the video once sensor is high
-    set the mrl of the video to the mediaplayer
-    play the video and
-
-    '''
-    player.set_fullscreen(True) # set full screen
-    player.set_mrl(path)    #setting the media in the mediaplayer object created
+    player.set_fullscreen(True)  # set full screen
+    player.set_mrl(path)    # setting the media in the mediaplayer object created
     player.play()           # play the video
+
+
 '''
 =========================================================================================================
 RFID functions
 =========================================================================================================
 '''
+
+
+def rfid_init():
+    global pn532
+    while True:
+        try:
+            # Non-hardware reset/request with I2C
+            pn532 = PN532_I2C(i2c, debug=False)
+            ic, ver, rev, support = pn532.firmware_version
+            print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
+            break
+        except:
+            print("failed to start RFID")
+            sleep(1)
+    pn532.SAM_configuration()  # Configure PN532 to communicate with MiFare cards
+
 
 def rfid_read(read_block):
     try:
@@ -118,39 +98,33 @@ def rfid_read(read_block):
 
 
 def rfid_present():
-    '''
-    checks if the card is present inside the box
-    '''
     try:
-        uid = pn532.read_passive_target(timeout=0.5) #read the card
+        uid = pn532.read_passive_target(timeout=0.5)
     except RuntimeError:
         uid = None
-
     return uid
 
 
-'''
-=========================================================================================================
-"MAIN"
-=========================================================================================================
-'''
 def main():
+
+    light_setup()
+    rfid_init()
 
     print('Welcome to Poison Scanner')
 
-    pdv = True #play default video
+    play_default_video = True
 
     print('Waiting Card')
 
     while True:
         gc.collect()
-        if player.get_state() == vlc.State.Ended or pdv==True:
 
+        if player.get_state() == vlc.State.Ended or play_default_video:
             play_video(config['PATH']['video'] + "/default.mov")
-            pdv = False
+            play_default_video = False
 
         if rfid_present():
-
+            # why is rfid present called 3 times? this call does nothing?
             uid = rfid_present()
 
             GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_ON"])
@@ -174,14 +148,13 @@ def main():
 
                 print('Non poisoned card')
 
-  
             while rfid_present():
-                 continue
+                continue
 
             print("Card Removed")
 
             GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_OFF"]) 
-            pdv = True
+            play_default_video = True
 
 
 if __name__ == "__main__":
