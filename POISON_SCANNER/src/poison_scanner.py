@@ -165,12 +165,12 @@ def main():
 
             if read_data in config["CARDS"]["poisoned_cards"]: 
               
-                play_video(config['PATH']['video'] + "/scanner_toxic_sound.mp4")
+                play_video(config['PATH']['video'] + "/toxic_video.mp4")
                 print('Poisoned card')
 
             elif read_data in config["CARDS"]["non_poisoned_cards"]:
 
-                play_video(config['PATH']['video'] + "/scanner_nontoxic_sound.mp4")
+                play_video(config['PATH']['video'] + "/nontoxic_video.mp4")
 
                 print('Non poisoned card')
 

@@ -62,7 +62,7 @@ top2 = tk.Toplevel(root, bg='#000000')
 geo_str = str(scrW) + "x" + str(scrH)
 window = root
 window.geometry(geo_str)
-window.title("Forensik Hamburg")
+window.title("Forensik Stuttgart")
 window.grid_rowconfigure(0, weight=1)
 window.grid_rowconfigure(2, weight=1)
 window.grid_columnconfigure(0, weight=1)
