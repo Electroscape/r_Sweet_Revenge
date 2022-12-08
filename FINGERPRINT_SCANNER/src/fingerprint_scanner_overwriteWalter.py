@@ -62,7 +62,7 @@ top2 = tk.Toplevel(root, bg='#000000')
 geo_str = str(scrW) + "x" + str(scrH)
 window = root
 window.geometry(geo_str)
-window.title("Forensik Hamburg")
+window.title("Forensik Stuttgart")
 window.grid_rowconfigure(0, weight=1)
 window.grid_rowconfigure(2, weight=1)
 window.grid_columnconfigure(0, weight=1)
@@ -253,9 +253,9 @@ def card_func(sample_var):
     str_geo = "+%d+%d" % (x, y)
     print("img @ " + str_geo)
     toplevel.geometry(str_geo)
-    print(city)
+
     toplevel.title("Scanning result")
-    FA_Bild = tk.PhotoImage(file = config['PATH']['image'] + 'fingerprints/' + f'{city}/' + config["CARDS_IMAGES"].get(sample_var, config["CARDS_IMAGES"]["unk"]))
+    FA_Bild = tk.PhotoImage(file = config['PATH']['image'] + 'fingerprints/' + config["CARDS_IMAGES"].get(sample_var, config["CARDS_IMAGES"]["unk"]))
     FA_Label = tk.Label(toplevel, image=FA_Bild)
     FA_Label.image = FA_Bild
     FA_Label.grid()
@@ -735,6 +735,6 @@ if __name__ == "__main__":
     canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0, relief='ridge').pack(fill=tk.BOTH, expand=1)
     videopanel.pack(fill=tk.BOTH, expand=1)
     
- 
+
     main()
     window.mainloop()

@@ -1,7 +1,7 @@
 {
     "PATH": {
-        "image": "/home/2cp/FINGERPRINT_SCANNER/img/",
-        "video": "/home/2cp/FINGERPRINT_SCANNER/vid/"
+        "image": "/home/2cp/FINGERPRINT_SCANNERST/FINGERPRINT_SCANNER/img/",
+        "video": "/home/2cp/FINGERPRINT_SCANNERST/FINGERPRINT_SCANNER/vid/"
     },
     "PIN": {
         "hh": {
@@ -20,14 +20,14 @@
         "read_block" : 4
     },
     "CARDS_IMAGES" : {
-        "BE": "1-eva_julius.png",
-        "ZK": "2-janine.png",
-        "SB": "3-jessica_unknown.png",
-        "TB": "4-luise.png",
-        "DT": "5-jakob_unknown.png",
-        "RF": "6-johannes_unknown.png",
-        "KU": "7-jessica.png",
-        "VM": "8-julius_unknown_johannes.png",
+        "BE": "1-eva_julius-becher.png",
+        "ZK": "2-janine-zucker.png",
+        "SB": "3-jessica_carl-suessstoff.png",
+        "TB": "4-luise-tabletten.png",
+        "DT": "5-jakob_carl-donut_zigaretten.png",
+        "RF": "6-johannes_carl-reisefuehrer.png",
+        "KU": "7-jessica-kuli.png",
+        "VM": "8-julius_carl_johannes-stevia.png",
         "unk": "9-unknown.png"
     }
 }
