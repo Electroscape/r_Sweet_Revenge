@@ -10,6 +10,9 @@ from adafruit_pn532.i2c import PN532_I2C
 from digitalio import DigitalInOut
 from subprocess import Popen, PIPE, DEVNULL
 from time import sleep
+import logging
+import subprocess
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
 
 '''
 =========================================================================================================
@@ -63,13 +66,17 @@ PN532 init
 i2c = busio.I2C(board.SCL, board.SDA)
 
 while True:
+    attempts = 0
     try:
         # Non-hardware reset/request with I2C
         pn532 = PN532_I2C(i2c, debug=False)
         ic, ver, rev, support = pn532.firmware_version
         print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
         break
-    except:
+    except Exception as exp:
+        attempts += 1
+        if attempts > 10:
+            logging.warning(f"RFID startup failure: {exp}")
         print("failed to start RFID")
         sleep(1)
         
@@ -82,18 +89,12 @@ VLC init
 '''
 
 def play_video(path):
-
-    '''
-    Description
-    -----------
-    Displaying the video once sensor is high
-    set the mrl of the video to the mediaplayer
-    play the video and
-
-    '''
-    player.set_fullscreen(True) # set full screen
-    player.set_mrl(path)    #setting the media in the mediaplayer object created
-    player.play()           # play the video
+    try:
+        player.set_fullscreen(True) # set full screen
+        player.set_mrl(path)    #setting the media in the mediaplayer object created
+        player.play()           # play the video
+    except Exception as exp:
+        logging.error(f"error within play_video {exp}")
 '''
 =========================================================================================================
 RFID functions
@@ -125,6 +126,8 @@ def rfid_present():
         uid = pn532.read_passive_target(timeout=0.5) #read the card
     except RuntimeError:
         uid = None
+    except Exception as exp:
+        logging.warning(f"unexpected rfid error: {exp}")
 
     return uid
 
@@ -138,23 +141,20 @@ def main():
 
     print('Welcome to Poison Scanner')
 
-    pdv = True #play default video
-
-    print('Waiting Card')
+    play_default_video = True #play default video
 
     while True:
-        gc.collect()
-        if player.get_state() == vlc.State.Ended or pdv==True:
 
+        gc.collect()
+
+        if player.get_state() == vlc.State.Ended or play_default_video:
             play_video(config['PATH']['video'] + "/default.mov")
-            pdv = False
+            play_default_video = False
 
         if rfid_present():
 
-            uid = rfid_present()
-
+            # uid = rfid_present()
             GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_ON"])
-            
             read_data = rfid_read(config["BLOCK"]["read_block"])
             
             if read_data in config["CARDS"]["poisoned_cards"] + config["CARDS"]["non_poisoned_cards"]:
@@ -163,15 +163,11 @@ def main():
                 print('Wrong Card')
                 play_video(config['PATH']['video'] + "/try_again.mov")
 
-            if read_data in config["CARDS"]["poisoned_cards"]: 
-              
+            if read_data in config["CARDS"]["poisoned_cards"]:
                 play_video(config['PATH']['video'] + "/scanner_toxic_sound.mp4")
                 print('Poisoned card')
-
             elif read_data in config["CARDS"]["non_poisoned_cards"]:
-
                 play_video(config['PATH']['video'] + "/scanner_nontoxic_sound.mp4")
-
                 print('Non poisoned card')
 
   
@@ -181,8 +177,14 @@ def main():
             print("Card Removed")
 
             GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_OFF"]) 
-            pdv = True
+            play_default_video = True
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as exp:
+        logging.error(f"fatal Error: {exp}")
+    finally:
+        subprocess.call(['sh', './start.sh'])
+
