@@ -1,0 +1,11 @@
+{
+    "general": {
+        "img_path": {
+            "all": "img/"
+        }
+    },
+    "tkinter": {
+        "background-color": "#F2F2F2",
+        "tabpadx": 50
+    }
+}
