@@ -3,17 +3,18 @@ import gc
 import json
 from tkinter import messagebox
 from tkinter import *
+import tkinter as tk
 from PIL import Image
 
 gc.collect()
 
 argparser = argparse.ArgumentParser(
-    description='Carls Office')
+    description='Christines Office')
 
 argparser.add_argument(
     '-c',
     '--city',
-    help='name of the city: [hh / st]')
+    help='name of the city: [hh / s]')
 
 args = argparser.parse_args()
 
@@ -22,24 +23,26 @@ with open('config.json', 'r', encoding='utf8') as config_file:
 
 city = args.city
 language = 'deu'
-riddle_solved = False
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
                                                         FUNCTIONS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 def landingpage():
     window.unbind('<Return>')
-    frame_language.grid(row=1, column=1)
-    label_headline.grid(row=0, column=0, sticky= W+E, columnspan=3)    
-    button_deu.grid(row=0, column=0, sticky=W+E, padx=config['tkinter']['tabpadx'], pady=20)
-    button_eng.grid(row=1, column=0, sticky=W+E, padx=config['tkinter']['tabpadx'], pady=20)
+    # Changed Button to Canvas
+    bg = canvas_language.create_image(0, 0, image=bg_image_startscreen, anchor=tk.NW)    
+    button_deu_canvas = canvas_language.create_image(650, 820, image=flag_deu)
+    button_eng_canvas = canvas_language.create_image(1200, 820, image=flag_eng)
+    canvas_language.tag_bind(button_deu_canvas, "<Button-1>", select_deu)
+    canvas_language.tag_bind(button_eng_canvas, "<Button-1>", select_eng)
+    
 
-def select_eng():
+def select_eng(event):
     global language
     language = 'eng'
     login_window()
 
-def select_deu():
+def select_deu(event):
     global language
     language = 'deu'
     login_window()
@@ -47,6 +50,7 @@ def select_deu():
 def login_window():
     frame_language.grid_forget()
     label_headline.grid_forget()
+    canvas_language.pack_forget()
     window.bind('<Return>', pw_check)
     
     frame_login.grid(row=1, column=1)
@@ -76,19 +80,13 @@ def pw_hint():
 
 def pw_check(event=0):
     global language
-    global riddle_solved
-
-    pass_guess = input_password.get()
-    input_password.delete(0, END)
-
-    if pass_guess == config['general']['password']:
-        riddle_solved = True
+    
+    if input_password.get() == config['general']['password']:
         show_website()
-    elif pass_guess == config['general']['exit_password']:
+    elif input_password.get() == config['general']['exit_password']:
         close()
     else:
-        if not riddle_solved:
-            messagebox.showinfo(config['text']['password_wrong']['title'][language], config['text']['password_wrong']['text'][language])
+        messagebox.showinfo(config['text']['password_wrong']['title'][language], config['text']['password_wrong']['text'][language])
 
 def show_website():
     frame_login.grid_forget()
@@ -135,13 +133,19 @@ window.bind('Super_L', dismiss)
 frame_login = Frame(window, bg='#FFFFFF', bd=200, height=600, width=500)
 frame_language = Frame(window, bg=config['tkinter']['background-color'], bd=200, height=900, width=1600)
 
+# ------------------------ Canvas ---------------------------------
+canvas_language = tk.Canvas(window, bg="black", width = 1920, height = 1080)
+canvas_language.pack()
+
 #------------------------ Bilder ------------------------
 label_logo = Label(frame_login, bg='#FFFFFF')
 label_headline=Label(window, text="Sprache wählen / Please select your language", bg=config['tkinter']['background-color'], font= "HELVETICA 40 bold")
 label_name=Label(frame_login, bg='#FFFFFF', font= "HELVETICA 18 bold")
 label_password = Label(frame_login, bg='#FFFFFF', font= "HELVETICA 18 bold")
-label_username = Label(frame_login, text='Carl', bg='#FFFFFF', font= "HELVETICA 18 bold")
+label_username = Label(frame_login, text='Christine', bg='#FFFFFF', font= "HELVETICA 18 bold")
 label_website = Label(window)
+bg_image_startscreen = tk.PhotoImage(file = config['general']['img_path']['all'] +  'startscreen.png')
+label_background_startsceen = tk.Label(window, image = bg_image_startscreen)
 
 #------------------------ Eingabe ------------------------
 flag_deu = PhotoImage(file = config['general']['img_path']['all'] + "deu.png")
