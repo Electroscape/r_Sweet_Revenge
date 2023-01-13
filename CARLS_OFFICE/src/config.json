@@ -1,11 +1,11 @@
 {
     "general": {
-        "password": "12091973",
+        "password": "10081987",
         "exit_password": "20162016",
         "img_path": {
-            "all": "../img/",
-            "hh": "../img/hh/",
-            "st": "../img/st/"
+            "all": "img/",
+            "hh": "img/hh/",
+            "s": "img/s/"
         }
     },
     "tkinter": {
@@ -20,11 +20,11 @@
         "login": {
             "username": {
                 "deu": "Name",
-                "eng": "Name"
+                "eng": "name"
             },
             "password": {
                 "deu": "Passwort",
-                "eng": "Password"
+                "eng": "password"
             }
         },
         "password_wrong": {
