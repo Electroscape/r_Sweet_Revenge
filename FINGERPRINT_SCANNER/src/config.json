@@ -13,21 +13,21 @@
     },
     "TKINTER": {
         "background-color": "#F2F2F2",
-        "tabpadx": 50,
+        "tabpadx": 35,
         "font-size": 22
     },
     "BLOCK" :{
         "read_block" : 4
     },
     "CARDS_IMAGES" : {
-        "BE": "1-eva_julius.png",
-        "ZK": "2-janine.png",
-        "SB": "3-jessica_unknown.png",
-        "TB": "4-luise.png",
-        "DT": "5-jakob_unknown.png",
-        "RF": "6-johannes_unknown.png",
-        "KU": "7-jessica.png",
-        "VM": "8-julius_unknown_johannes.png",
-        "unk": "9-unknown.png"
+        "PI": "a_pillendose.png",
+        "PS": "b_pralinenschachtel.png",
+        "PF": "c_pralinenpapier.png",
+        "IS": "d_insulinpen.png",
+        "ES": "e_espressotasse.png",
+        "PD": "f_pralinenpapier.png",
+        "DO": "g_donut.png",
+        "unk": "unknown.png"
+
     }
 }
