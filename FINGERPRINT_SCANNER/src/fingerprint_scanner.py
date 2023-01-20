@@ -9,6 +9,7 @@ from threading import Thread
 from time import sleep, time
 import tkinter as tk
 from tkinter import W, E, messagebox, ttk
+#from PIL import ImageTk, Image
 import vlc
 import pyautogui
 
@@ -59,8 +60,18 @@ root = tk.Tk()
 scrW = root.winfo_screenwidth()
 scrH = root.winfo_screenheight()
 top2 = tk.Toplevel(root, bg='#000000')
+geo_str = str(scrW) + "x" + str(scrH)
 window = root
-videopanel = tk.Frame(top2)
+window.geometry(geo_str)
+window.title("Forensik Stuttgart by Christian Walter")
+window.grid_rowconfigure(0, weight=1)
+window.grid_rowconfigure(2, weight=1)
+window.grid_columnconfigure(0, weight=1)
+window.grid_columnconfigure(2, weight=1)
+window.configure(background=config['TKINTER']['background-color'])
+window.attributes('-fullscreen', True)
+
+
 pyautogui.FAILSAFE = False
 warning_popup = None
 picture_popup = None
@@ -69,26 +80,27 @@ picture_popup = None
 frame_login = tk.Frame(window, bg=config['TKINTER']['background-color'], bd=0, height=700, width=1620)
 frame_language = tk.Frame(window, bg=config['TKINTER']['background-color'], bd=200, height=700, width=700)
 
+# ------------------------ Canvas ---------------------------------
+canvas_language = tk.Canvas(window, bg="black", width = 1920, height = 1080)
+canvas_language.pack()
+
 # ------------------------ Images ---------------------------------
 bg_image_de = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/deu/background.png')
 bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
+bg_image_startscreen = tk.PhotoImage(file = config['PATH']['image'] +  'startscreen.png')
 flag_deu = tk.PhotoImage(file = config['PATH']['image'] + 'deu.png')
 flag_eng = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
+declined_eng = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/eng/declined.png')
+accepted_eng = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/eng/accepted.png')
+declined_deu = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/deu/declined.png')
+accepted_deu = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/deu/accepted.png')
 
 # ------------------------ Label ----------------------------------
 label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
 label_background_deu = tk.Label(window, image=bg_image_de)
 label_background_eng = tk.Label(window, image=bg_image_en)
-label_background_eng = tk.Label(window, bg='#FFFFFF')
-label_flag_deu = tk.Label(frame_language, image=flag_deu)
-label_flag_eng = tk.Label(frame_language, image=flag_eng)
-label_text_deu = tk.Label(frame_language, text="Deutsch", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
-label_text_eng = tk.Label(frame_language, text="English", bg=config['TKINTER']['background-color'], font="HELVETICA 30 bold")
+label_background_startsceen = tk.Label(window, image = bg_image_startscreen)
 
-# ------------------------ Buttons ------------------------
-
-button_deu = tk.Button(frame_language, image=flag_deu, command=lambda: select_deu())
-button_eng = tk.Button(frame_language, image=flag_eng, command=lambda: select_eng())
 
 '''
 =========================================================================================================
@@ -96,7 +108,7 @@ Global VLC variables
 =========================================================================================================
 '''
 
-vlc_instance = vlc.Instance( ) # creating Instance class object
+vlc_instance = vlc.Instance("--no-xlib") # creating Instance class object
 player = vlc_instance.media_player_new() # creating a new media object
 
 
@@ -156,7 +168,7 @@ class Check_pin(Thread):
                 self.status = bool(GPIO.input(self.pin))
                 if self.status:
                     print("door: locked")
-                    scan_field()
+                    #scan_field()
                 else:
                     print("door: unlocked")
 
@@ -179,8 +191,9 @@ class MyOptionMenu(tk.OptionMenu):
     def __init__(self, master, status, *options):
         self.var = tk.StringVar(master)
         self.var.set(status)
+        self.var.trace("w", changed) # for transparent buttons
         super().__init__(master, self.var, *options)
-        self.config(font=('calibri', (config['TKINTER']['font-size'])), bg='#E2E2E2', width=12)
+        self.config(font=('calibri', (config['TKINTER']['font-size'])), bg='#E2E2E2', width=16)
         self['menu'].config(font=('calibri', (config['TKINTER']['font-size'])), bg=config['TKINTER']['background-color'])
 
 '''
@@ -200,7 +213,7 @@ def play_video(path):
     "mp4" = scanner video.mp4
 
     '''
-    player.set_fullscreen(True) # set full screen
+    #player.set_fullscreen(True) # set full screen
     player.set_xwindow(videopanel.winfo_id())
 
     player.set_mrl(path)    #setting the media in the mediaplayer object created
@@ -284,6 +297,7 @@ def scan_field():
         return -1
 
     if ButtonScan["state"] == tk.DISABLED :
+        
         return -1
     else:
         print(f'btn state: {ButtonScan["state"]}')
@@ -297,7 +311,8 @@ def scan_field():
     start_time = time()
     count = 0
   
-    play_video(config['PATH']['video'] + 'scannerfilm_mit_sound.mp4')
+    #play_video(config['PATH']['video'] + 'scannerfilm_mit_sound.mp4')
+    play_video(config['PATH']['video'] + 'Scanner_kurz.mp4')
 
     # Found Solution
     success = False
@@ -306,9 +321,10 @@ def scan_field():
 
     uid = None
     while chk_door.is_door_closed(): #check door is closed
+    
         
         uid = rfid_present()
-
+        
         print('.', end="")
         # Try again if no card is available.
         sleep(0.2)
@@ -316,7 +332,9 @@ def scan_field():
         if uid is None: # check if card is detected
 
             count += 1
+            print("in")
             if count > 10:
+                
                 print("Timeout! Failed to read")
                 break
 
@@ -447,29 +465,26 @@ def popupmsg(ttl, msg):
 
 
 def check_language(event=0):
-    
+
     '''
     Displays the pictures based on whether its german or english
     '''
     
     if check_proof() == 1 and check_person1() == 1 and check_person2() == 1 and check_toxic() == 1:
         toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/{language}/accepted.png')
-        Richter_Label = tk.Label(toplevel, image=Richter_Bild)
+        if language == "deu":
+            Richter_Label = tk.Label(toplevel, image=accepted_deu)
+        else:
+            Richter_Label = tk.Label(toplevel, image=accepted_eng)
+            
         Richter_Label.grid()
-        Richter_Label.image = Richter_Bild
-    elif check_proof() == 2 and check_person1() == 2 and check_person2() == 1 and check_toxic() == 2:
-        toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/{language}/hint.png')
-        Richter_Label = tk.Label(toplevel, image=Richter_Bild)
-        Richter_Label.grid()
-        Richter_Label.image = Richter_Bild
     else:
         toplevel = tk.Toplevel()
-        Richter_Bild = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/{language}/declined.png')
-        Richter_Label = tk.Label(toplevel, image=Richter_Bild)
+        if language == "deu":
+            Richter_Label = tk.Label(toplevel, image=declined_deu)
+        else:
+            Richter_Label = tk.Label(toplevel, image=declined_eng)
         Richter_Label.grid()
-        Richter_Label.image = Richter_Bild
 
 def check_proof():
 
@@ -480,18 +495,20 @@ def check_proof():
     list_proof = proof[1:]
     proof_check = [(p.var).get() for p in list_proof]
 
-    if language == texts[city]["deu"]:
-
+    if language == "deu":
+       
         if texts[city]["deu"]["check_beweismittel_richtig"] == proof_check:
+            
             var_proof =1 
     
         elif texts[city]["deu"]["check_beweismittel_fast_richtig"] == proof_check:
+        
             var_proof = 2
         else :
             var_proof = 0
 
     else:
-
+       
         if texts[city]["eng"]["proof_correct"] == proof_check:
             
             var_proof = 1
@@ -501,9 +518,8 @@ def check_proof():
 
         else :
             var_proof = 0
-    
+    print(var_proof)
     return var_proof
-
 
 def check_person1():
 
@@ -514,10 +530,11 @@ def check_person1():
     list_person_one = person_one[1:]
     person1_check = [(p.var).get() for p in list_person_one]
 
-    if language == texts[city]["deu"]:
-   
+    if language == "deu":
+        
         if texts[city]["deu"]["check_deu_person1_richtig"] == person1_check:
             var_person1 = 1
+            
 
         elif texts[city]["deu"]["check_deu_person1_fast_richtig"] == person1_check:
             var_person1 = 2
@@ -526,6 +543,7 @@ def check_person1():
        
 
     else :
+     
         if texts[city]["eng"]["check_en_person1_correct"] == person1_check:
             var_person1 = 1
     
@@ -533,10 +551,10 @@ def check_person1():
             var_person1 = 2
         else :
             var_person1 = 0
-
+ 
+    print(var_person1)
     return var_person1
         
-
 def check_person2():
 
     '''
@@ -546,9 +564,10 @@ def check_person2():
     list_person_two = person_two[1:]
     person2_check = [(p.var).get() for p in list_person_two]
 
-    if language == texts[city]["deu"]:
-
+    if language == "deu":
+     
         if texts[city]["deu"]["check_deu_person2_richtig"] == person2_check:
+            
             var_person2 = 1
         else :
             var_person2 = 0
@@ -558,9 +577,9 @@ def check_person2():
             var_person2 = 1
         else :
             var_person2 = 0
-
+  
+    print(var_person2)
     return var_person2
-
 
 def check_toxic():
 
@@ -571,17 +590,18 @@ def check_toxic():
     list_toxic = toxicity[1:]
     toxic_check = [(p.var).get() for p in list_toxic]
 
-    if language == texts[city]["deu"]:
-
+    if language == "deu":
+        
          if texts[city]["deu"]["check_toxisch_richtig"] == toxic_check:
-            var_toxisch = 1
-
+            var_toxic = 1
+           
          elif texts[city]["deu"]["check_toxisch_fast_richtig"] == toxic_check:
-            var_toxisch = 2
+            var_toxic = 2
          else :
-            var_toxisch = 0
+            var_toxic  = 0
    
     else :  
+    
         if texts[city]["eng"]["check_toxic_correct"] == toxic_check:
             var_toxic = 1
 
@@ -589,76 +609,120 @@ def check_toxic():
             var_toxic = 2
         else :
             var_toxic = 0
-
+    
+    
+    print(var_toxic)
     return var_toxic
 
 
+def changed(*args):
+    lineNr = int(args[0][-1])+1
+    if len(args[0]) == 7 and  lineNr < 8: # first Variables
+        if proof[lineNr].var.get() ==  texts[city][language]['dropdown_objects'][0] or proof[lineNr].var.get() ==  texts[city][language]['dropdown_objects'][1]:
+            disable_line(lineNr)
+        else:
+            #print(person_one[lineNr].var.get())
+            if person_one[lineNr].var.get() ==  texts['all'][language]['not_available']:
+                enable_line(lineNr)
 
-# from here on there are new functions
+'''
+=========================================================================================================
+From here on there are new functions
+=========================================================================================================
+'''
 def landingpage():
     window.unbind('<Return>')
-    frame_language.grid(row=1, column=1)
-    label_headline.grid(row=0, column=0, sticky=W+E, columnspan=3)
-    button_deu.grid(row=0, column=0, sticky=W+E, padx=config['TKINTER']['tabpadx'], pady=20)
-    button_eng.grid(row=1, column=0, sticky=W+E, padx=config['TKINTER']['tabpadx'], pady=20)
+    # Changed Button to Canvas
+    bg = canvas_language.create_image(0, 0, image=bg_image_startscreen, anchor=tk.NW)    
+    button_deu_canvas = canvas_language.create_image(650, 820, image=flag_deu)
+    button_eng_canvas = canvas_language.create_image(1200, 820, image=flag_eng)
+    canvas_language.tag_bind(button_deu_canvas, "<Button-1>", select_deu)
+    canvas_language.tag_bind(button_eng_canvas, "<Button-1>", select_eng)
 
-
-def select_eng():
+def select_eng(event):
     global language
     language = 'eng'
+    label_background_eng.place(x=0,y=0)
+    label_background_eng.lower()
     evidence_collection()
 
 
-def select_deu():
+def select_deu(event):
     global language
     language = 'deu'
+    label_background_deu.place(x=0,y=0)
+    label_background_deu.lower()
     evidence_collection()
+    
+def disable_line(lineNr):
+    person_one[lineNr].var.set( texts['all'][language]['not_available']) 
+    person_one[lineNr].configure(state="disabled")
+    person_two[lineNr].var.set( texts['all'][language]['not_available']) 
+    person_two[lineNr].configure(state="disabled")
+    toxicity[lineNr].var.set( texts['all'][language]['not_available']) 
+    toxicity[lineNr].configure(state="disabled")
+    
+def enable_line(lineNr):
+    person_one[lineNr].var.set( texts['all'][language]['dropdown_std']) 
+    person_one[lineNr].configure(state="active")
+    person_two[lineNr].var.set( texts['all'][language]['dropdown_std']) 
+    person_two[lineNr].configure(state="active")
+    toxicity[lineNr].var.set( texts['all'][language]['dropdown_std']) 
+    toxicity[lineNr].configure(state="active")
+    
 
 
 def evidence_collection():
 
     frame_language.grid_forget()
-    label_headline.grid_forget()
-    button_deu.grid_forget()
-    button_eng.grid_forget()
-
-    frame_login.grid(row=1, column=1)
+    canvas_language.pack_forget()
     
+    frame_login.place(x=20,y=360)
+    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
+
     places.append(tk.Label(frame_login, text=texts['all'][language]['head_place'], bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
     for i in range(1, 8):
         places.append(tk.Label(frame_login, text=i, bg=config['TKINTER']['background-color'], font="HELVETICA 18 bold"))
-    for i in range(0, len(places)):
+    for i in range(0,len(places)):
         places[i].grid(row=i, sticky=W+E, padx=config['TKINTER']['tabpadx'])
 
-    init_dropdown(proof, texts['all'][language]['head_object'], texts[city][language]['dropdown_objects'])
+    init_proof(proof, texts['all'][language]['head_object'], texts[city][language]['dropdown_objects'])
     for i in range(len(proof)):
         proof[i].grid(row=i, column=1, sticky=W+E, padx=config['TKINTER']['tabpadx'])
 
     init_dropdown(person_one, texts['all'][language]['head_person_1'], texts['all'][language]['dropdown_person_1'])
     for i in range(0, len(person_one)):
-        person_one[i].grid(row=i, column=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])
+        person_one[i].grid(row=i, column=2, sticky=W+E, padx=config['TKINTER']['tabpadx'])  
 
     init_dropdown(person_two, texts['all'][language]['head_person_2'], texts['all'][language]['dropdown_person_2'])
     for i in range(0, len(person_two)):
-        person_two[i].grid(row=i, column=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])
+        person_two[i].grid(row=i, column=3, sticky=W+E, padx=config['TKINTER']['tabpadx'])  
 
     init_dropdown(toxicity, texts['all'][language]['head_toxicity'], texts['all'][language]['dropdown_toxicity'])
     for i in range(0, len(toxicity)):
-        toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])
+        toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])   
 
-    if language == texts[city]["deu"] :
+    disable_line(3)
+    
+    if language == "deu" :
         ButtonSendGer.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)    
     else:
-        ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)
-    
+        ButtonSendEn.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)  
+
     ButtonScan["state"] = tk.NORMAL   # Activate scanning ability
+    
 
 
 def init_dropdown(_list, text_head, text_dropdown):
     _list.append(tk.Label(frame_login, text=text_head, bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
     for i in range(1, 8):
         _list.append(MyOptionMenu(frame_login, texts['all'][language]['dropdown_std'], *text_dropdown))
-    
+
+def init_proof(_list, text_head, text_dropdown):
+    _list.append(tk.Label(frame_login, text=text_head, bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
+    for i in range(1, 8):
+        _list.append(MyOptionMenu(frame_login, texts['all'][language]['preset_object'][i-1], *text_dropdown))
+        
 '''
 =========================================================================================================
 "MAIN"
@@ -667,7 +731,6 @@ def init_dropdown(_list, text_head, text_dropdown):
 def main():
 
     root.title("Fingerprint scanner")
-    geo_str = str(scrW) + "x" + str(scrH)
 
     # We will create two screens: one for the interface, one for laser scanner
     # small screen root
@@ -680,16 +743,7 @@ def main():
 
     root.option_add('*Dialog.msg.width', 34)
     print("Geo str: " + geo_str)
-    window.geometry(geo_str)
-    window.title("Forensik Hamburg")
-    window.grid_rowconfigure(0, weight=1)
-    window.grid_rowconfigure(2, weight=1)
-    window.grid_columnconfigure(0, weight=1)
-    window.grid_columnconfigure(2, weight=1)
-    window.configure(background=config['TKINTER']['background-color'])
-    window.attributes('-fullscreen', True)
-    
-    
+      
     ButtonScan["state"] = tk.DISABLED   # Disable scanning ability
 
     sleep(1)
@@ -704,14 +758,15 @@ if __name__ == "__main__":
     ButtonSendGer = tk.Button(frame_login, text="Absenden", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
     ButtonSendEn = tk.Button(frame_login, text="Submit", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
     ButtonScan = tk.Button(frame_login, text="SCAN", font="HELVETICA 18 bold", command=scan_field, bg='#BB3030', fg='#E0E0E0')
-    ButtonScan.grid(row=8, column=1, rowspan=2, stick=W+E, pady=20, padx=config['TKINTER']['tabpadx'])
     ButtonScan.config(activebackground='#FF5050')
 
     chk_door = Check_pin(config['PIN'][city]['door'])
     c1 = Thread(target=chk_door.checkloop)
     c1.start()
+    videopanel = tk.Frame(top2)
     canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0, relief='ridge').pack(fill=tk.BOTH, expand=1)
     videopanel.pack(fill=tk.BOTH, expand=1)
+    
 
     main()
     window.mainloop()
