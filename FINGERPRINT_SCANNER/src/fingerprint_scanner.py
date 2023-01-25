@@ -293,7 +293,7 @@ def scan_field():
     
     if not chk_door.is_door_closed():
         popupmsg(
-            "Close door", "Bitte schließen Sie die scannertür \n Please close the scanner door") 
+            "Close door", "Bitte schließen Sie die Scannertür \n Please close the scanner door") 
         return -1
 
     if ButtonScan["state"] == tk.DISABLED :
@@ -316,7 +316,7 @@ def scan_field():
 
     # Found Solution
     success = False
-    msg = ["Timeout!", "Beweismittel richtig einlegen \n Object not placed correctly"]
+    msg = ["Fehler!", "Beweismittel richtig einlegen \n Object not placed correctly"]
     
 
     uid = None
@@ -333,7 +333,7 @@ def scan_field():
 
             count += 1
             print("in")
-            if count > 10:
+            if count > 4:
                 
                 print("Timeout! Failed to read")
                 break
