@@ -31,6 +31,10 @@ def landingpage():
     window.unbind('<Return>')
     # Changed Button to Canvas
     bg = canvas_language.create_image(0, 0, image=bg_image_startscreen, anchor=tk.NW)    
+    # on 1600x900 screen resolution 
+    # button_deu_canvas = canvas_language.create_image(550, 680, image=flag_deu)
+    # button_eng_canvas = canvas_language.create_image(1050, 680, image=flag_eng)    
+    # on normal screens 
     button_deu_canvas = canvas_language.create_image(650, 820, image=flag_deu)
     button_eng_canvas = canvas_language.create_image(1200, 820, image=flag_eng)
     canvas_language.tag_bind(button_deu_canvas, "<Button-1>", select_deu)
