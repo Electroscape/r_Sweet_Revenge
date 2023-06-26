@@ -27,10 +27,7 @@
             "head_toxicity": "Toxicity"
         }
     },
-    "hh": {
-    },
-    "st": {   
-    
+    "hh": {   
         "deu": {
             "dropdown_objects": ["- Auswahl -","- nicht vorliegend -", "Donut", "Espressotasse", "Insulin Pen", "Pillendose", "Pralinenpapier weiß", "Pralinenschachtel"],
             "check_beweismittel_richtig" : ["Insulin Pen" , "Espressotasse" ,  "- nicht vorliegend -" , "Pillendose", "Pralinenschachtel", "Donut" ,"Pralinenpapier weiß"],
@@ -40,8 +37,29 @@
             "check_deu_person1_fast_richtig" : ["Dana","Clemens", "n/a","Fabian","Cathie","Claudia","Clemens"],
             "check_beweismittel_fast_richtig" : ["Insulin Pen" , "Espressotasse" ,  "- kein -" , "Pillendose", "Pralinenschachtel", "Donut" ,"Pralinenpapier"],
             "check_toxisch_fast_richtig" : ["Nein", "Nein" ,  "n/a" ,"Ja" ,"Nein","Nein","Ja"]
-	},
-        
+	    },
+        "eng": {
+            "dropdown_objects": ["- none -","- not available -", "Donut", "Espresso cup", "Insulin Pen", "Pillbox", "Candy box", "Candy wrapper white"],
+            "proof_correct" : ["Insulin Pen", "Espresso cup", "- not available -", "Pillbox", "Candy box", "Donut", "Candy wrapper white"],
+            "check_en_person1_correct" : ["Dana","Clemens", "n/a","Fabian","Cathie","Claudia","Clemens"],
+            "check_en_person2_correct" : ["- none -","Dana","n/a","- none -","unknown","unknown","Vincent"],
+            "check_toxic_correct" : ["no","no","n/a","yes","no","no","yes"],
+            "proof_almost_correct" : ["Insulin Pen", "Espresso cup", "- not available -", "Pillbox", "Candy box", "Donut", "Candy wrapper white"],
+            "check_en_person1_almost_correct" :["Dana","Clemens", "- not available -","Fabian","Cathie","Claudia","Clemens"],
+            "check_toxic_almost_correct" :  ["no","no","- not available -","yes","no","no","yes"]
+        }
+    },
+    "st": {   
+        "deu": {
+            "dropdown_objects": ["- Auswahl -","- nicht vorliegend -", "Donut", "Espressotasse", "Insulin Pen", "Pillendose", "Pralinenpapier weiß", "Pralinenschachtel"],
+            "check_beweismittel_richtig" : ["Insulin Pen" , "Espressotasse" ,  "- nicht vorliegend -" , "Pillendose", "Pralinenschachtel", "Donut" ,"Pralinenpapier weiß"],
+            "check_deu_person1_richtig" : ["Dana","Clemens", "n/a","Fabian","Cathie","Claudia","Clemens"],
+            "check_deu_person2_richtig" : ["- kein -","Dana", "n/a","- kein -","unbekannt","unbekannt","Vincent"],
+            "check_toxisch_richtig" : ["Nein", "Nein" , "n/a" ,"Ja" ,"Nein","Nein","Ja"],
+            "check_deu_person1_fast_richtig" : ["Dana","Clemens", "n/a","Fabian","Cathie","Claudia","Clemens"],
+            "check_beweismittel_fast_richtig" : ["Insulin Pen" , "Espressotasse" ,  "- kein -" , "Pillendose", "Pralinenschachtel", "Donut" ,"Pralinenpapier"],
+            "check_toxisch_fast_richtig" : ["Nein", "Nein" ,  "n/a" ,"Ja" ,"Nein","Nein","Ja"]
+	    },
         "eng": {
             "dropdown_objects": ["- none -","- not available -", "Donut", "Espresso cup", "Insulin Pen", "Pillbox", "Candy box", "Candy wrapper white"],
             "proof_correct" : ["Insulin Pen", "Espresso cup", "- not available -", "Pillbox", "Candy box", "Donut", "Candy wrapper white"],
