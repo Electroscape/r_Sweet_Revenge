@@ -5,7 +5,7 @@
         "img_path": {
             "all": "../img/",
             "hh": "../img/hh/",
-            "s": "../img/s/"
+            "st": "../img/s/"
         }
     },
     "tkinter": {
