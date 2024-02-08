@@ -295,7 +295,8 @@ void phone_correct() {
 void phone_wrong() {
     LCD_wrong();
     playWrongPassword();
-    software_Reset();
+    lcd.clear();
+    lcd.noBacklight();
 }
 void phone_wrong_causeReset() {
     FirstCall = false;
@@ -620,7 +621,7 @@ void keypadEvent(KeypadEvent eKey) {
             Serial.println(eKey);
             switch (eKey) {
                 case '*':
-                    software_Reset();
+                    softwareReset();
                     break;
                 default:
                     break;
@@ -833,7 +834,7 @@ void i2c_scanner() {
     delay(500);
 }
 
-void software_Reset() {
+void softwareReset() {
     Serial.println(F("Restarting in"));
     delay(250);
     for (byte i = 3; i > 0; i--) {
