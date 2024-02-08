@@ -153,10 +153,10 @@ const unsigned long UpdateLCDAfterDelay = 5000; /* Refreshing the LCD periodical
 
 /*==CONSTRUCTOR=============================================================================================*/
 // PCF8574
-Expander_PCF8574 relay;
-Expander_PCF8574 inputs;
+PCF8574 relay;
+PCF8574 inputs;
 // Keypad
-Keypad_I2C MyKeypad(makeKeymap(KeypadKeys), KeypadRowPins, KeypadColPins, KEYPAD_ROWS, KEYPAD_COLS, KEYPAD_I2C_ADD, PCF8574);
+Keypad_I2C MyKeypad(makeKeymap(KeypadKeys), KeypadRowPins, KeypadColPins, KEYPAD_ROWS, KEYPAD_COLS, KEYPAD_I2C_ADD, PCF8574_MODE);
 // Password
 char* taxi_number = (char*)"86753489";
 Password pass_tele_num = Password(makeKeymap(taxi_number));
