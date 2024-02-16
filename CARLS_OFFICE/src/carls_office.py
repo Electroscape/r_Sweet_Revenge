@@ -4,6 +4,7 @@ import json
 from tkinter import messagebox
 from tkinter import *
 import tkinter as tk
+import re
 
 gc.collect()
 
@@ -90,8 +91,8 @@ def pw_hint():
 
 def pw_check(event=0):
     global language
-
-    if input_password.get() == config['general']['password']:
+    modified_password = re.sub("\.", "", input_password.get())
+    if modified_password == config['general']['password']:
         show_website()
     elif input_password.get() == config['general']['exit_password']:
         close()
