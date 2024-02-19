@@ -1,0 +1,4 @@
+python-vlc
+adafruit-blinka
+adafruit-circuitpython-pn532
+pyautogui
