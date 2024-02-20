@@ -68,7 +68,7 @@ def login_window():
     input_password.grid(row=1, column=1)
     input_password.focus_set()
     
-    logo_police = PhotoImage(file = config['general']['img_path'][city] + "police.png")
+    logo_police = PhotoImage(file=config['general']['img_path'][city] + "police.png")
     label_logo.configure(image=logo_police)
     label_logo.image=logo_police
     label_logo.grid(row=0, column=2, columnspan=2, rowspan=2, sticky=W+E+N+S, padx=10, pady=10)
@@ -78,9 +78,11 @@ def login_window():
     button_pw_hint.configure(text=config['text']['button']['pw_hint'][language])
     button_pw_hint.grid(row=3, column=2, sticky=E, padx=10)
 
+
 def pw_hint():
     global language
     messagebox.showinfo(config['text']['password_hint']['title'][language], config['text']['password_hint']['text'][language])
+
 
 def pw_check(event=0):
     global language
