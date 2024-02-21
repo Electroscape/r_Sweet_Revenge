@@ -33,6 +33,7 @@ argparser.add_argument(
     help='name of the city: [hh / st]')
 
 city = argparser.parse_args().city
+print(f"city is configured to {city}")
 
 
 '''
@@ -90,7 +91,7 @@ canvas_language.pack()
 # ------------------------ Images ---------------------------------
 bg_image_de = tk.PhotoImage(file='img/' + city + '/background/deu/background.png')
 bg_image_en = tk.PhotoImage(file='img/' + city + '/background/eng/background.png')
-bg_image_startscreen = tk.PhotoImage(file='img/' + 'startscreen.png')
+bg_image_startscreen = tk.PhotoImage(file='img/' + city + '/startscreen.png')
 flag_deu = tk.PhotoImage(file='img/' + 'deu.png')
 flag_eng = tk.PhotoImage(file='img/' + 'eng.png')
 declined_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/declined.png')
@@ -502,7 +503,7 @@ def check_proof():
        
         if texts[city]["deu"]["check_beweismittel_richtig"] == proof_check:
             
-            var_proof =1 
+            var_proof = 1
     
         elif texts[city]["deu"]["check_beweismittel_fast_richtig"] == proof_check:
         
