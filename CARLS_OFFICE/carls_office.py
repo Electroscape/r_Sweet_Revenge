@@ -1,10 +1,12 @@
 import argparse
 import gc
 import json
+# how not to import tutorial, cba to fix
 from tkinter import messagebox
 from tkinter import *
 import tkinter as tk
-from PIL import Image
+# from PIL import Image
+import re
 
 gc.collect()
 
@@ -86,8 +88,8 @@ def pw_hint():
 
 def pw_check(event=0):
     global language
-    
-    if input_password.get() == config['general']['password']:
+    modified_password = re.sub("\.", "", input_password.get())
+    if modified_password == config['general']['password']:
         show_website()
     elif input_password.get() == config['general']['exit_password']:
         close()
