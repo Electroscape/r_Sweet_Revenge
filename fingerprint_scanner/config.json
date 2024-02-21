@@ -1,8 +1,4 @@
 {
-    "PATH": {
-        "image": "/home/2cp/FINGERPRINT_SCANNER/img/",
-        "video": "/home/2cp/FINGERPRINT_SCANNER/vid/"
-    },
     "PIN": {
         "hh": {
             "door": 4

@@ -3,9 +3,9 @@
         "password": "10081987",
         "exit_password": "20162016",
         "img_path": {
-            "all": "../img/",
-            "hh": "../img/hh/",
-            "st": "../img/s/"
+            "all": "img/",
+            "hh": "img/hh/",
+            "st": "img/s/"
         }
     },
     "tkinter": {

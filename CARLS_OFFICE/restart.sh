@@ -1,4 +1,5 @@
+#!/bin/bash
+cd "$(dirname "$0")" || exit
+
 sudo pkill python
-export DISPLAY=:0.0
-xhost +
-bash ~/CARLS_OFFICE/start.sh
+bash start.sh
