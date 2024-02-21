@@ -1,12 +1,12 @@
-# For clean start
-# Kill all relevant programs
-sudo pkill fbi
-sudo pkill vlc
-sudo pkill python
+#!/bin/bash
+cd "$(dirname "$0")" || exit
 
-cd ~/POISON_SCANNER/
+pkill python
+export DISPLAY=:0.0
+xhost +
+source venv/bin/activate
 
 # python script 
 sudo fbi -T 1 -noverbose -a /home/2cp/POISON_SCANNER/img/hh/black_screen.jpg &
-python3 src/poison_scanner.py -c hh
+python3 src/poison_scanner.py -c st
 
