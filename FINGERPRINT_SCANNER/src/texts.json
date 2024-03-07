@@ -39,7 +39,7 @@
             "check_toxisch_fast_richtig" : ["Nein", "Nein" ,  "n/a" ,"Ja" ,"Nein","Nein","Ja"]
 	    },
         "eng": {
-            "dropdown_objects": ["- none -","- not available -", "Donut", "Espresso cup", "Insulin Pen", "Pillbox", "Candy box", "Candy wrapper white"],
+            "dropdown_objects": ["- select -","- not available -", "Donut", "Espresso cup", "Insulin Pen", "Pillbox", "Candy box", "Candy wrapper white"],
             "proof_correct" : ["Insulin Pen", "Espresso cup", "- not available -", "Pillbox", "Candy box", "Donut", "Candy wrapper white"],
             "check_en_person1_correct" : ["Dana","Clemens", "n/a","Fabian","Cathie","Claudia","Clemens"],
             "check_en_person2_correct" : ["- none -","Dana","n/a","- none -","unknown","unknown","Vincent"],
@@ -61,7 +61,7 @@
             "check_toxisch_fast_richtig" : ["Nein", "Nein" ,  "n/a" ,"Ja" ,"Nein","Nein","Ja"]
 	    },
         "eng": {
-            "dropdown_objects": ["- none -","- not available -", "Donut", "Espresso cup", "Insulin Pen", "Pillbox", "Candy box", "Candy wrapper white"],
+            "dropdown_objects": ["- select -","- not available -", "Donut", "Espresso cup", "Insulin Pen", "Pillbox", "Candy box", "Candy wrapper white"],
             "proof_correct" : ["Insulin Pen", "Espresso cup", "- not available -", "Pillbox", "Candy box", "Donut", "Candy wrapper white"],
             "check_en_person1_correct" : ["Dana","Clemens", "n/a","Fabian","Cathie","Claudia","Clemens"],
             "check_en_person2_correct" : ["- none -","Dana","n/a","- none -","unknown","unknown","Vincent"],

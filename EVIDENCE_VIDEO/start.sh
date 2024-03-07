@@ -1,4 +1,4 @@
 sudo pkill python
 
-cd ~/EVIDENCE_VIDEO/
+cd ~/Electroscape/r_Sweet_Revenge/EVIDENCE_VIDEO/
 python3 background.py
