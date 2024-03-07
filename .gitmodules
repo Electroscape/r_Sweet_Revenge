@@ -1,0 +1,3 @@
+[submodule "Simple-Socket"]
+	path = Simple-Socket
+	url = https://github.com/MartinPek/Simple-Socket

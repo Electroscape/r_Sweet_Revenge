@@ -12,7 +12,10 @@ from tkinter import W, E, messagebox, ttk
 #from PIL import ImageTk, Image
 import vlc
 import pyautogui
+import os
 
+
+print(os.getcwd())
 
 
 
@@ -30,6 +33,7 @@ argparser.add_argument(
     help='name of the city: [hh / st]')
 
 city = argparser.parse_args().city
+print(f"city is configured to {city}")
 
 
 '''
@@ -63,7 +67,7 @@ top2 = tk.Toplevel(root, bg='#000000')
 geo_str = str(scrW) + "x" + str(scrH)
 window = root
 window.geometry(geo_str)
-window.title("Forensik Stuttgart by Christian Walter")
+window.title("Forensik Hamburg")
 window.grid_rowconfigure(0, weight=1)
 window.grid_rowconfigure(2, weight=1)
 window.grid_columnconfigure(0, weight=1)
@@ -85,15 +89,15 @@ canvas_language = tk.Canvas(window, bg="black", width = 1920, height = 1080)
 canvas_language.pack()
 
 # ------------------------ Images ---------------------------------
-bg_image_de = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/deu/background.png')
-bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
-bg_image_startscreen = tk.PhotoImage(file = config['PATH']['image'] +  'startscreen.png')
-flag_deu = tk.PhotoImage(file = config['PATH']['image'] + 'deu.png')
-flag_eng = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
-declined_eng = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/eng/declined.png')
-accepted_eng = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/eng/accepted.png')
-declined_deu = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/deu/declined.png')
-accepted_deu = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/deu/accepted.png')
+bg_image_de = tk.PhotoImage(file='img/' + city + '/background/deu/background.png')
+bg_image_en = tk.PhotoImage(file='img/' + city + '/background/eng/background.png')
+bg_image_startscreen = tk.PhotoImage(file='img/' + city + '/startscreen.png')
+flag_deu = tk.PhotoImage(file='img/' + 'deu.png')
+flag_eng = tk.PhotoImage(file='img/' + 'eng.png')
+declined_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/declined.png')
+accepted_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/accepted.png')
+declined_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/declined.png')
+accepted_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/accepted.png')
 
 # ------------------------ Label ----------------------------------
 label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
@@ -499,7 +503,7 @@ def check_proof():
        
         if texts[city]["deu"]["check_beweismittel_richtig"] == proof_check:
             
-            var_proof =1 
+            var_proof = 1
     
         elif texts[city]["deu"]["check_beweismittel_fast_richtig"] == proof_check:
         
