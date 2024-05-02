@@ -13,13 +13,11 @@ from subprocess import Popen, PIPE, DEVNULL
 from time import sleep
 import logging
 import subprocess
+
+
+
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
 
-'''
-=========================================================================================================
-Argument parser
-=========================================================================================================
-'''
 
 argparser = argparse.ArgumentParser(
     description='Poison-Scanner')
@@ -32,38 +30,19 @@ argparser.add_argument(
 city = argparser.parse_args().city
 
 
-'''
-=========================================================================================================
-Load config
-=========================================================================================================
-'''
 with open('src/config.json', 'r') as config_file:
     config = json.load(config_file)
 
-'''
-=========================================================================================================
-Global VLC variables
-=========================================================================================================
-'''
+
 vlc_instance = vlc.Instance() # creating Instance class object
 player = vlc_instance.media_player_new() # creating a new media object
 
-'''
-=========================================================================================================
-set UV LIGHT variables
-=========================================================================================================
-'''
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(config["PIN"][city]["UV_light_pin"], GPIO.OUT)
 GPIO.output(config["PIN"][city]["UV_light_pin"], config["PIN"][city]["UV_LIGHT_OFF"]) 
 
-'''
-=========================================================================================================
-PN532 init
-=========================================================================================================
-'''
-# I2C connection:
+
 i2c = busio.I2C(board.SCL, board.SDA)
 
 while True:
@@ -81,13 +60,8 @@ while True:
         print("failed to start RFID")
         sleep(1)
         
-pn532.SAM_configuration() # Configure PN532 to communicate with MiFare cards
+pn532.SAM_configuration()
 
-'''
-=========================================================================================================
-VLC init
-=========================================================================================================
-'''
 
 def play_video(path):
     try:
@@ -98,11 +72,7 @@ def play_video(path):
         print(f"running video at {dt.now()}")
     except Exception as exp:
         logging.error(f"error within play_video {exp}")
-'''
-=========================================================================================================
-RFID functions
-=========================================================================================================
-'''
+
 
 def rfid_read(read_block):
     try:
@@ -122,11 +92,8 @@ def rfid_read(read_block):
 
 
 def rfid_present():
-    '''
-    checks if the card is present inside the box
-    '''
     try:
-        uid = pn532.read_passive_target(timeout=0.5) #read the card
+        uid = pn532.read_passive_target(timeout=0.5)
     except RuntimeError:
         uid = None
     except Exception as exp:
@@ -135,16 +102,11 @@ def rfid_present():
     return uid
 
 
-'''
-=========================================================================================================
-"MAIN"
-=========================================================================================================
-'''
 def main():
 
     print('Welcome to Poison Scanner')
 
-    play_default_video = True #play default video
+    play_default_video = True
 
     while True:
 
@@ -172,10 +134,9 @@ def main():
             elif read_data in config["CARDS"]["non_poisoned_cards"]:
                 play_video(config['PATH']['video'] + "/scanner_nontoxic_sound.mp4")
                 print('Non poisoned card')
-
   
             while rfid_present():
-                 continue
+                continue
 
             print("Card Removed")
 
