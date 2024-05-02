@@ -13,10 +13,12 @@ from subprocess import Popen, PIPE, DEVNULL
 from time import sleep
 import logging
 import subprocess
+from datetime import datetime as dt
 
-
-
-logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
+now = dt.now()
+log_name = now.strftime("logs/poisonscanner %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.ERROR,
+                    format=f'%(asctime)s %(levelname)s : %(message)s')
 
 
 argparser = argparse.ArgumentParser(
