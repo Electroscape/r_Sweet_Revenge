@@ -12,18 +12,8 @@ from tkinter import W, E, messagebox, ttk
 #from PIL import ImageTk, Image
 import vlc
 import pyautogui
-import os
 
 
-print(os.getcwd())
-
-
-
-'''
-=========================================================================================================
-Argument parser
-=========================================================================================================
-'''
 argparser = argparse.ArgumentParser(
     description='Fingerprint Scanner')
 
@@ -33,25 +23,15 @@ argparser.add_argument(
     help='name of the city: [hh / st]')
 
 city = argparser.parse_args().city
-print(f"city is configured to {city}")
 
 
-'''
-=========================================================================================================
-Load config
-=========================================================================================================
-'''
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
 
 with open('texts.json', 'r') as texts_file:
     texts = json.load(texts_file)
 
-'''
-=========================================================================================================
-Global language variable
-=========================================================================================================
-'''
+
 language = 'deu'
 
 '''
@@ -67,7 +47,7 @@ top2 = tk.Toplevel(root, bg='#000000')
 geo_str = str(scrW) + "x" + str(scrH)
 window = root
 window.geometry(geo_str)
-window.title("Forensik Hamburg")
+window.title("Forensik Stuttgart by Christian Walter")
 window.grid_rowconfigure(0, weight=1)
 window.grid_rowconfigure(2, weight=1)
 window.grid_columnconfigure(0, weight=1)
@@ -89,15 +69,15 @@ canvas_language = tk.Canvas(window, bg="black", width = 1920, height = 1080)
 canvas_language.pack()
 
 # ------------------------ Images ---------------------------------
-bg_image_de = tk.PhotoImage(file='img/' + city + '/background/deu/background.png')
-bg_image_en = tk.PhotoImage(file='img/' + city + '/background/eng/background.png')
-bg_image_startscreen = tk.PhotoImage(file='img/' + city + '/startscreen.png')
-flag_deu = tk.PhotoImage(file='img/' + 'deu.png')
-flag_eng = tk.PhotoImage(file='img/' + 'eng.png')
-declined_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/declined.png')
-accepted_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/accepted.png')
-declined_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/declined.png')
-accepted_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/accepted.png')
+bg_image_de = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/deu/background.png')
+bg_image_en = tk.PhotoImage(file = config['PATH']['image'] + city + '/background/eng/background.png')
+bg_image_startscreen = tk.PhotoImage(file = config['PATH']['image'] +  'startscreen.png')
+flag_deu = tk.PhotoImage(file = config['PATH']['image'] + 'deu.png')
+flag_eng = tk.PhotoImage(file = config['PATH']['image'] + 'eng.png')
+declined_eng = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/eng/declined.png')
+accepted_eng = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/eng/accepted.png')
+declined_deu = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/deu/declined.png')
+accepted_deu = tk.PhotoImage(file = config['PATH']['image'] + city + f'/messages/deu/accepted.png')
 
 # ------------------------ Label ----------------------------------
 label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
@@ -105,22 +85,8 @@ label_background_deu = tk.Label(window, image=bg_image_de)
 label_background_eng = tk.Label(window, image=bg_image_en)
 label_background_startsceen = tk.Label(window, image = bg_image_startscreen)
 
-
-'''
-=========================================================================================================
-Global VLC variables
-=========================================================================================================
-'''
-
 vlc_instance = vlc.Instance("--no-xlib") # creating Instance class object
 player = vlc_instance.media_player_new() # creating a new media object
-
-
-'''
-=========================================================================================================
-PN532 init
-=========================================================================================================
-'''
 
 pn532 = PN532_I2C(busio.I2C(board.SCL, board.SDA), debug=False)
 ic, ver, rev, support = pn532.firmware_version
@@ -128,19 +94,8 @@ print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
 sleep(0.5)  # this delay avoids some problems after wakeup
 pn532.SAM_configuration()   # Configure PN532 to communicate with MiFare cards
 
-
-'''
-=========================================================================================================
-GPIO init
-=========================================================================================================
-'''
 GPIO.setmode(GPIO.BCM)
 
-'''
-=========================================================================================================
-Variable init
-=========================================================================================================
-'''
 places = [] 
 proof = []
 person_one = []
@@ -148,15 +103,7 @@ person_two = []
 toxicity = []
 
 
-
-
-'''
-=========================================================================================================
-RFID classes (related to RFID scanner)
-=========================================================================================================
-'''
 class Check_pin(Thread):
-    # Check door status
     def __init__(self, door_pin):
         Thread.__init__(self)
         self.pin = door_pin
@@ -230,18 +177,15 @@ def play_video(path):
         while True:
             continue
 
-'''
-=========================================================================================================
-RFID functions
-=========================================================================================================
-'''
-def authenticate(uid, read_block): #does the authentication if its a classic tag
+
+def authenticate(uid, read_block):
     rc = 0
     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
     rc = pn532.mifare_classic_authenticate_block(
         uid, read_block, MIFARE_CMD_AUTH_A, key)
    
     return rc
+
 
 def card_func(sample_var):
     sleep(1)
@@ -254,7 +198,6 @@ def card_func(sample_var):
 
     toplevel = tk.Toplevel()
 
-   
     x = root.winfo_x()
     y = root.winfo_y()
     str_geo = "+%d+%d" % (x, y)
@@ -272,12 +215,15 @@ def card_func(sample_var):
     toplevel.lift(root)
     picture_popup = toplevel
 
+
 def foo():      # dummy function
     pass
+
 
 def return_to_normal():
     global ButtonScan
     ButtonScan["command"] = scan_field
+
 
 def scan_field():
     
@@ -321,28 +267,23 @@ def scan_field():
     # Found Solution
     success = False
     msg = ["Fehler!", "Beweismittel richtig einlegen \n Object not placed correctly"]
-    
 
     uid = None
     while chk_door.is_door_closed(): #check door is closed
-    
-        
+
         uid = rfid_present()
         
         print('.', end="")
         # Try again if no card is available.
         sleep(0.2)
 
-        if uid is None: # check if card is detected
-
+        if uid is None:
             count += 1
             print("in")
             if count > 4:
-                
                 print("Timeout! Failed to read")
                 break
-
-        else: #card is found 
+        else:
             print('Found card with UID:', [hex(i) for i in uid])
             break
 
@@ -371,6 +312,7 @@ def scan_field():
 
     window.update()
     return uid
+
 
 def rfid_read(uid, block):
 
@@ -490,6 +432,7 @@ def check_language(event=0):
             Richter_Label = tk.Label(toplevel, image=declined_eng)
         Richter_Label.grid()
 
+
 def check_proof():
 
     '''
@@ -503,7 +446,7 @@ def check_proof():
        
         if texts[city]["deu"]["check_beweismittel_richtig"] == proof_check:
             
-            var_proof = 1
+            var_proof =1 
     
         elif texts[city]["deu"]["check_beweismittel_fast_richtig"] == proof_check:
         
@@ -524,6 +467,7 @@ def check_proof():
             var_proof = 0
     print(var_proof)
     return var_proof
+
 
 def check_person1():
 
@@ -558,7 +502,8 @@ def check_person1():
  
     print(var_person1)
     return var_person1
-        
+
+
 def check_person2():
 
     '''
