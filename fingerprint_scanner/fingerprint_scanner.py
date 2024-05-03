@@ -13,6 +13,13 @@ from tkinter import W, E, messagebox, ttk
 import vlc
 import pyautogui
 
+from datetime import datetime as dt
+import logging
+
+now = dt.now()
+log_name = now.strftime("logs/fingerprint %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.ERROR,
+                    format=f'%(asctime)s %(levelname)s : %(message)s')
 
 argparser = argparse.ArgumentParser(
     description='Fingerprint Scanner')
@@ -342,7 +349,7 @@ def rfid_read(uid, block):
             print("None block")
 
     except Exception as e:
-        print(e)
+        logging.error(e)
 
     return read_data
 
@@ -667,16 +674,13 @@ def init_dropdown(_list, text_head, text_dropdown):
     for i in range(1, 8):
         _list.append(MyOptionMenu(frame_login, texts['all'][language]['dropdown_std'], *text_dropdown))
 
+
 def init_proof(_list, text_head, text_dropdown):
     _list.append(tk.Label(frame_login, text=text_head, bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
     for i in range(1, 8):
         _list.append(MyOptionMenu(frame_login, texts['all'][language]['preset_object'][i-1], *text_dropdown))
         
-'''
-=========================================================================================================
-"MAIN"
-=========================================================================================================
-'''
+
 def main():
 
     root.title("Fingerprint scanner")
@@ -698,9 +702,7 @@ def main():
     sleep(1)
     
     landingpage()
-    
 
-# Mainloop
 
 if __name__ == "__main__":
 
@@ -716,6 +718,8 @@ if __name__ == "__main__":
     canvas = tk.Canvas(videopanel,  bg="black", bd=0, highlightthickness=0, relief='ridge').pack(fill=tk.BOTH, expand=1)
     videopanel.pack(fill=tk.BOTH, expand=1)
     
-
-    main()
-    window.mainloop()
+    try:
+        main()
+        window.mainloop()
+    except Exception as exp:
+        logging.error(exp)
