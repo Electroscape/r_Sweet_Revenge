@@ -740,6 +740,7 @@ def evidence_collection():
         toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])   
 
     disable_line(3)
+    frame_login.grid_columnconfigure(1, weight=1, minsize=690) 
     
     if language == "deu" :
         ButtonSendGer.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)    
