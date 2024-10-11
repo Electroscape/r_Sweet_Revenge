@@ -96,8 +96,10 @@ flag_deu = tk.PhotoImage(file='img/' + 'deu.png')
 flag_eng = tk.PhotoImage(file='img/' + 'eng.png')
 declined_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/declined.png')
 accepted_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/accepted.png')
+final_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/final.png')
 declined_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/declined.png')
 accepted_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/accepted.png')
+final_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/final.png')
 close_message = tk.PhotoImage(file='img/close.png')
 
 # ------------------------ Label ----------------------------------
@@ -467,7 +469,20 @@ def popupmsg(ttl, msg):
     ttk.Button(top, text="OK", command=top.destroy).grid(row=1, column=2, padx=(7, 7), sticky="e")
     top.lift(root)
     warning_popup = top
-        
+
+def update_dropdown(menu, new_options):
+    # Lösche alle aktuellen Einträge im Menü
+    menu['menu'].delete(0, 'end')
+
+    # Füge die neuen Einträge hinzu und setze die Auswahl in der 'self.var'
+    for option in new_options:
+        menu['menu'].add_command(label=option, command=tk._setit(menu.var, option))
+
+def update_proof_dropdowns(proof, new_dropdown_options):
+    # Überspringe das Label (index 0), gehe zu den OptionMenus
+    for i in range(1, len(proof)):
+        update_dropdown(proof[i], new_dropdown_options)     
+
 def close_window(toplevel):
     toplevel.destroy()  # Schließt nur das `toplevel`-Fenster
 
@@ -485,6 +500,13 @@ def check_language(event=0):
             Richter_Label.create_image(0, 0, anchor='nw', image=accepted_deu)
         else:
             Richter_Label.create_image(0, 0, anchor='nw', image=accepted_eng)
+        update_proof_dropdowns(proof, texts[city][language]['dropdown_objects_final'])      # Update Dropdown mit Pralinenpapier Schwarz       
+        
+    elif check_proof() == 2 and check_person1() == 2 and check_person2() == 2 and check_toxic() == 2:
+        if language == "deu":
+            Richter_Label.create_image(0, 0, anchor='nw', image=final_deu)
+        else:
+            Richter_Label.create_image(0, 0, anchor='nw', image=final_eng)
             
     else:
         if language == "deu":
@@ -513,7 +535,7 @@ def check_proof():
             
             var_proof = 1
     
-        elif texts[city]["deu"]["check_beweismittel_fast_richtig"] == proof_check:
+        elif texts[city]["deu"]["check_beweismittel_final"] == proof_check:
         
             var_proof = 2
         else :
@@ -525,7 +547,7 @@ def check_proof():
             
             var_proof = 1
 
-        elif texts[city]["eng"]["proof_almost_correct"] == proof_check:
+        elif texts[city]["eng"]["proof_final"] == proof_check:
             var_proof = 2
 
         else :
@@ -548,7 +570,7 @@ def check_person1():
             var_person1 = 1
             
 
-        elif texts[city]["deu"]["check_deu_person1_fast_richtig"] == person1_check:
+        elif texts[city]["deu"]["check_deu_person1_final"] == person1_check:
             var_person1 = 2
         else :
             var_person1 = 0
@@ -559,7 +581,7 @@ def check_person1():
         if texts[city]["eng"]["check_en_person1_correct"] == person1_check:
             var_person1 = 1
     
-        elif texts[city]["eng"]["check_en_person1_almost_correct"] == person1_check:
+        elif texts[city]["eng"]["check_en_person1_final"] == person1_check:
             var_person1 = 2
         else :
             var_person1 = 0
@@ -578,15 +600,18 @@ def check_person2():
 
     if language == "deu":
      
-        if texts[city]["deu"]["check_deu_person2_richtig"] == person2_check:
-            
+        if texts[city]["deu"]["check_deu_person2_richtig"] == person2_check:            
             var_person2 = 1
+        elif texts[city]["deu"]["check_deu_person2_final"] == person2_check:
+            var_person2 = 2
         else :
             var_person2 = 0
 
     else :
         if texts[city]["eng"]["check_en_person2_correct"] == person2_check:
-            var_person2 = 1
+            var_person2 = 1    
+        elif texts[city]["eng"]["check_en_person1_final"] == person2_check:
+            var_person2 = 2
         else :
             var_person2 = 0
   
@@ -607,7 +632,7 @@ def check_toxic():
          if texts[city]["deu"]["check_toxisch_richtig"] == toxic_check:
             var_toxic = 1
            
-         elif texts[city]["deu"]["check_toxisch_fast_richtig"] == toxic_check:
+         elif texts[city]["deu"]["check_toxisch_final"] == toxic_check:
             var_toxic = 2
          else :
             var_toxic  = 0
@@ -617,7 +642,7 @@ def check_toxic():
         if texts[city]["eng"]["check_toxic_correct"] == toxic_check:
             var_toxic = 1
 
-        elif texts[city]["eng"]["check_toxic_almost_correct"] == toxic_check:
+        elif texts[city]["eng"]["check_toxic_final"] == toxic_check:
             var_toxic = 2
         else :
             var_toxic = 0
