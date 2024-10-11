@@ -98,6 +98,7 @@ declined_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/declined.png')
 accepted_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/accepted.png')
 declined_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/declined.png')
 accepted_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/accepted.png')
+close_message = tk.PhotoImage(file='img/close.png')
 
 # ------------------------ Label ----------------------------------
 label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
@@ -466,29 +467,36 @@ def popupmsg(ttl, msg):
     ttk.Button(top, text="OK", command=top.destroy).grid(row=1, column=2, padx=(7, 7), sticky="e")
     top.lift(root)
     warning_popup = top
-
+        
+def close_window(toplevel):
+    toplevel.destroy()  # Schließt nur das `toplevel`-Fenster
 
 def check_language(event=0):
 
     '''
     Displays the pictures based on whether its german or english
     '''
-    
+    toplevel = tk.Toplevel()
+    # Nachricht als Canvas für unsichtbaren Schließbutton
+    Richter_Label = tk.Canvas(toplevel, width=1266, height=784)  # Beispielgröße anpassen
+    Richter_Label.grid()
     if check_proof() == 1 and check_person1() == 1 and check_person2() == 1 and check_toxic() == 1:
-        toplevel = tk.Toplevel()
         if language == "deu":
-            Richter_Label = tk.Label(toplevel, image=accepted_deu)
+            Richter_Label.create_image(0, 0, anchor='nw', image=accepted_deu)
         else:
-            Richter_Label = tk.Label(toplevel, image=accepted_eng)
+            Richter_Label.create_image(0, 0, anchor='nw', image=accepted_eng)
             
-        Richter_Label.grid()
     else:
-        toplevel = tk.Toplevel()
         if language == "deu":
-            Richter_Label = tk.Label(toplevel, image=declined_deu)
+            Richter_Label.create_image(0, 0, anchor='nw', image=declined_deu)
         else:
-            Richter_Label = tk.Label(toplevel, image=declined_eng)
-        Richter_Label.grid()
+            Richter_Label.create_image(0, 0, anchor='nw', image=declined_eng)
+    
+    # Unsichtbarer Button auf dem Canvas
+    close_button = Richter_Label.create_image(1180, 59, image=close_message)
+
+    # Button mit Lambda Funktion
+    Richter_Label.tag_bind(close_button, "<Button-1>", lambda event: close_window(toplevel))
 
 def check_proof():
 
