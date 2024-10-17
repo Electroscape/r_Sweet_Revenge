@@ -23,9 +23,9 @@ argparser.add_argument(
     help='name of the city: [hh / st]')
 
 city = argparser.parse_args().city
-print(f"city is configured to {city}")
+# print(f"city is configured to {city}")
 
-root_dir = Path(__file__).parent
+root_dir = Path(__file__).resolve().parent
 img_root_dir = root_dir.joinpath("img")
 local_dir = img_root_dir.joinpath(city)
 
@@ -121,7 +121,7 @@ class Check_pin(Thread):
                 self.status = bool(GPIO.input(self.pin))
                 if self.status:
                     print("door: locked")
-                    #scan_field()
+                    # scan_field()
                 else:
                     print("door: unlocked")
 
@@ -151,13 +151,9 @@ def play_video(path):
 
     player.set_mrl(path)    #setting the media in the mediaplayer object created
     player.play()           # play the video
-    if path[-3:] == "mp4":  #check if its the scanner video
-        while player.get_state() != vlc.State.Ended : # loop until the video is finished
-            continue
-        return True
-    else : 
-        while True:
-            continue
+    while player.get_state() != vlc.State.Ended : # loop until the video is finished
+        continue
+    return True
 
 def authenticate(uid, read_block): #does the authentication if its a classic tag
     rc = 0
@@ -184,9 +180,12 @@ def card_func(sample_var):
     str_geo = "+%d+%d" % (x, y)
     print("img @ " + str_geo)
     toplevel.geometry(str_geo)
-
     toplevel.title("Scanning result")
-    FA_Bild = tk.PhotoImage(file = config['PATH']['image'] + 'fingerprints/' + config["CARDS_IMAGES"].get(sample_var, config["CARDS_IMAGES"]["unk"]))
+
+    fingerprint_file = img_root_dir.joinpath('fingerprints')
+    fingerprint_file = fingerprint_file.joinpath(config["CARDS_IMAGES"].get(sample_var, config["CARDS_IMAGES"]["unk"]))
+
+    FA_Bild = tk.PhotoImage(file = fingerprint_file)
     FA_Label = tk.Label(toplevel, image=FA_Bild)
     FA_Label.image = FA_Bild
     FA_Label.grid()
@@ -221,7 +220,7 @@ def scan_field():
     
     if not chk_door.is_door_closed():
         popupmsg(
-            "Close door", "Bitte schließen Sie die Scannertür \n Please close the scanner door") 
+            "Close door", "Bitte schließen Sie die Scannertür \n Please close the scanner door")
         return -1
 
     if ButtonScan["state"] == tk.DISABLED :
@@ -238,9 +237,9 @@ def scan_field():
     
     start_time = time()
     count = 0
-  
+
     #play_video(config['PATH']['video'] + 'scannerfilm_mit_sound.mp4')
-    play_video(config['PATH']['video'] + 'Scanner_kurz.mp4')
+    play_video(root_dir.joinpath('vid/Scanner_kurz.mp4'))
 
     # Found Solution
     success = False
@@ -289,6 +288,8 @@ def scan_field():
 
     # actions are taken later
     if success:
+        print("success")
+        # + config["CARDS_IMAGES"].get(sample_var, config["CARDS_IMAGES"]["unk"]))
         card_func(read_data)
     else:
         popupmsg(*msg)
@@ -655,7 +656,7 @@ def evidence_collection():
         toxicity[i].grid(row=i, column=4, sticky=W+E, padx=config['TKINTER']['tabpadx'])   
 
     disable_line(3)
-    frame_login.grid_columnconfigure(1, weight=1, minsize=690) 
+    frame_login.grid_columnconfigure(1, weight=1, minsize=450)
     
     if language == "deu" :
         ButtonSendGer.grid(row=8, column=4, sticky=W, padx=config['TKINTER']['tabpadx'], pady=20)    
@@ -701,7 +702,6 @@ def main():
 
 
 if __name__ == "__main__":
-
     ButtonSendGer = tk.Button(frame_login, text="Absenden", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
     ButtonSendEn = tk.Button(frame_login, text="Submit", font="HELVETICA 18 bold", command=check_language, bg='#E2E2E2')
     ButtonScan = tk.Button(frame_login, text="SCAN", font="HELVETICA 18 bold", command=scan_field, bg='#BB3030', fg='#E0E0E0')
