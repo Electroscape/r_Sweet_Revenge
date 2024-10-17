@@ -13,19 +13,9 @@ from tkinter import W, E, messagebox, ttk
 import vlc
 import pyautogui
 import os
+from pathlib import Path
 
-
-print(os.getcwd())
-
-
-
-'''
-=========================================================================================================
-Argument parser
-=========================================================================================================
-'''
-argparser = argparse.ArgumentParser(
-    description='Fingerprint Scanner')
+argparser = argparse.ArgumentParser(description='Fingerprint Scanner')
 
 argparser.add_argument(
     '-c',
@@ -35,30 +25,18 @@ argparser.add_argument(
 city = argparser.parse_args().city
 print(f"city is configured to {city}")
 
+root_dir = Path(__file__).parent
+img_root_dir = root_dir.joinpath("img")
+local_dir = img_root_dir.joinpath(city)
 
-'''
-=========================================================================================================
-Load config
-=========================================================================================================
-'''
+
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
 
 with open('texts.json', 'r') as texts_file:
     texts = json.load(texts_file)
 
-'''
-=========================================================================================================
-Global language variable
-=========================================================================================================
-'''
 language = 'deu'
-
-'''
-=========================================================================================================
-Global tkinter variables
-=========================================================================================================
-'''
 
 root = tk.Tk()
 scrW = root.winfo_screenwidth()
@@ -75,7 +53,6 @@ window.grid_columnconfigure(2, weight=1)
 window.configure(background=config['TKINTER']['background-color'])
 window.attributes('-fullscreen', True)
 
-
 pyautogui.FAILSAFE = False
 warning_popup = None
 picture_popup = None
@@ -89,18 +66,19 @@ canvas_language = tk.Canvas(window, bg="black", width = 1920, height = 1080)
 canvas_language.pack()
 
 # ------------------------ Images ---------------------------------
-bg_image_de = tk.PhotoImage(file='img/' + city + '/background/deu/background.png')
-bg_image_en = tk.PhotoImage(file='img/' + city + '/background/eng/background.png')
-bg_image_startscreen = tk.PhotoImage(file='img/' + city + '/startscreen.png')
-flag_deu = tk.PhotoImage(file='img/' + 'deu.png')
-flag_eng = tk.PhotoImage(file='img/' + 'eng.png')
-declined_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/declined.png')
-accepted_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/accepted.png')
-final_eng = tk.PhotoImage(file='img/' + city + f'/messages/eng/final.png')
-declined_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/declined.png')
-accepted_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/accepted.png')
-final_deu = tk.PhotoImage(file='img/' + city + f'/messages/deu/final.png')
-close_message = tk.PhotoImage(file='img/close.png')
+bg_image_de = tk.PhotoImage(file=local_dir.joinpath('background/deu/background.png'))
+bg_image_en = tk.PhotoImage(file=local_dir.joinpath('background/eng/background.png'))
+bg_image_startscreen = tk.PhotoImage(file=img_root_dir.joinpath('startscreen.png'))
+flag_deu = tk.PhotoImage(file=img_root_dir.joinpath('deu.png'))
+flag_eng = tk.PhotoImage(file=img_root_dir.joinpath('eng.png'))
+declined_eng = tk.PhotoImage(file=local_dir.joinpath('messages/eng/declined.png'))
+accepted_eng = tk.PhotoImage(file=local_dir.joinpath('messages/eng/accepted.png'))
+final_eng = tk.PhotoImage(file=local_dir.joinpath('messages/eng/final.png'))
+declined_deu = tk.PhotoImage(file=local_dir.joinpath('messages/deu/declined.png'))
+accepted_deu = tk.PhotoImage(file=local_dir.joinpath('messages/deu/accepted.png'))
+final_deu = tk.PhotoImage(file=local_dir.joinpath('messages/deu/final.png'))
+close_message = tk.PhotoImage(file=img_root_dir.joinpath('close.png'))
+
 
 # ------------------------ Label ----------------------------------
 label_headline = tk.Label(window, text="Sprache wählen | Please select your language", bg=config['TKINTER']['background-color'], font="HELVETICA 40 bold")
@@ -108,22 +86,8 @@ label_background_deu = tk.Label(window, image=bg_image_de)
 label_background_eng = tk.Label(window, image=bg_image_en)
 label_background_startsceen = tk.Label(window, image = bg_image_startscreen)
 
-
-'''
-=========================================================================================================
-Global VLC variables
-=========================================================================================================
-'''
-
 vlc_instance = vlc.Instance("--no-xlib") # creating Instance class object
 player = vlc_instance.media_player_new() # creating a new media object
-
-
-'''
-=========================================================================================================
-PN532 init
-=========================================================================================================
-'''
 
 pn532 = PN532_I2C(busio.I2C(board.SCL, board.SDA), debug=False)
 ic, ver, rev, support = pn532.firmware_version
@@ -131,19 +95,8 @@ print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
 sleep(0.5)  # this delay avoids some problems after wakeup
 pn532.SAM_configuration()   # Configure PN532 to communicate with MiFare cards
 
-
-'''
-=========================================================================================================
-GPIO init
-=========================================================================================================
-'''
 GPIO.setmode(GPIO.BCM)
 
-'''
-=========================================================================================================
-Variable init
-=========================================================================================================
-'''
 places = [] 
 proof = []
 person_one = []
@@ -151,13 +104,6 @@ person_two = []
 toxicity = []
 
 
-
-
-'''
-=========================================================================================================
-RFID classes (related to RFID scanner)
-=========================================================================================================
-'''
 class Check_pin(Thread):
     # Check door status
     def __init__(self, door_pin):
@@ -188,11 +134,6 @@ class Check_pin(Thread):
             #print('POS is: {}, {} limitx'.format(currentMouseX, currentMouseY))
             pyautogui.moveTo(1024, currentMouseY)
 
-'''
-=========================================================================================================
-Tkinter classes
-=========================================================================================================
-'''
 class MyOptionMenu(tk.OptionMenu):
     # Dropdown anpassen
     def __init__(self, master, status, *options):
@@ -203,23 +144,8 @@ class MyOptionMenu(tk.OptionMenu):
         self.config(font=('calibri', (config['TKINTER']['font-size'])), bg='#E2E2E2', width=16)
         self['menu'].config(font=('calibri', (config['TKINTER']['font-size'])), bg=config['TKINTER']['background-color'])
 
-'''
-=========================================================================================================
-VLC init
-=========================================================================================================
-'''
+
 def play_video(path):
-
-    '''
-    Description
-    -----------
-    Displaying the video once sensor is high
-    set the mrl of the video to the mediaplayer
-    play the video and
-
-    "mp4" = scanner video.mp4
-
-    '''
     #player.set_fullscreen(True) # set full screen
     player.set_xwindow(videopanel.winfo_id())
 
@@ -233,11 +159,6 @@ def play_video(path):
         while True:
             continue
 
-'''
-=========================================================================================================
-RFID functions
-=========================================================================================================
-'''
 def authenticate(uid, read_block): #does the authentication if its a classic tag
     rc = 0
     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
@@ -421,12 +342,6 @@ def rfid_present():
     return uid
 
 
-
-'''
-=========================================================================================================
-Tkinter functions
-=========================================================================================================
-'''
 def motion(event):
     # limit the mouse motion to just the GUI dimensions
     # Returns two integers, the x and y of the mouse cursor's current position.
@@ -760,12 +675,8 @@ def init_proof(_list, text_head, text_dropdown):
     _list.append(tk.Label(frame_login, text=text_head, bg=config['TKINTER']['background-color'], font="HELVETICA 22 bold"))
     for i in range(1, 8):
         _list.append(MyOptionMenu(frame_login, texts['all'][language]['preset_object'][i-1], *text_dropdown))
-        
-'''
-=========================================================================================================
-"MAIN"
-=========================================================================================================
-'''
+
+
 def main():
 
     root.title("Fingerprint scanner")
@@ -787,9 +698,7 @@ def main():
     sleep(1)
     
     landingpage()
-    
 
-# Mainloop
 
 if __name__ == "__main__":
 
