@@ -1,6 +1,6 @@
 {
     "general": {
-        "password": "10081987",
+        "password": ["10081987", "braun", "brown"],
         "exit_password": "20162016",
         "img_path": {
             "all": "img/",

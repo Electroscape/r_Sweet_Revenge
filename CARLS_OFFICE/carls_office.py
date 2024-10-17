@@ -89,7 +89,9 @@ def pw_hint():
 def pw_check(event=0):
     global language
     modified_password = re.sub("\.", "", input_password.get())
-    if modified_password == config['general']['password']:
+    modified_password = modified_password.lower()  
+    valid_passwords = [pw.lower() for pw in config['general']['password']] 
+    if modified_password in valid_passwords:
         show_website()
     elif input_password.get() == config['general']['exit_password']:
         close()
