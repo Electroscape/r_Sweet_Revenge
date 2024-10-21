@@ -9,7 +9,7 @@
     },
     "TKINTER": {
         "background-color": "#F2F2F2",
-        "tabpadx": 35,
+        "tabpadx": 30,
         "font-size": 22
     },
     "BLOCK" :{
