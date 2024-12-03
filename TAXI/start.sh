@@ -1,3 +1,6 @@
+export DISPLAY=:0
+xhost +
+
 sudo pkill python
 sudo pkill fbi
 sudo pkill vlc

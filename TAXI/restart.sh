@@ -1,3 +1,7 @@
 export DISPLAY=:0
 xhost +
-bash ~/TAXI/start.sh
+
+echo "restarting"
+sudo pkill omxplayer
+sudo pkill python
+sudo python ~/taxi/video_5.py
