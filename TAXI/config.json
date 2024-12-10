@@ -1,0 +1,12 @@
+{
+    "hh": {
+        "sensor": 23,
+        "relay": 22,
+        "video_length": 26
+    },
+    "st": {
+        "sensor": 23,
+        "relay": 22,
+        "video_length": 38
+    }
+}
