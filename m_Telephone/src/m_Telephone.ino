@@ -237,6 +237,8 @@ void loop() {
                 wdt_reset();
                 relay.digitalWrite(DOOR_LOCK_PIN, !DOOR_LOCK_INIT);
                 Serial.println("Everything correct, open door");
+                delay(5000);
+                wdt_reset();
                 relay.digitalWrite(BUZZER_5V_PIN, !BUZZER_INIT);
                 relay.digitalWrite(BUZZER_12V_PIN, !BUZZER_INIT);
                 delay(300);
