@@ -74,6 +74,8 @@ def main():
             print("entering video loop")
             while True:
                 if not is_door_open():
+                    if door_triggered():
+                        continue
                     print("Tuer wieder geschlossen")
                     set_video(player, 'SuesseRache_S_Taxifahrt.mp4')
                     sleep(video_length)
