@@ -1,6 +1,6 @@
 {
     "general": {
-        "password": ["braun", "brown"],
+        "password": ["lektorin", "editor"],
         "exit_password": "20162016",
         "img_path": {
             "all": "img/",
@@ -43,8 +43,8 @@
                 "eng": "Help"
             },
             "text": {
-                "deu": "Augenfarbe, Schatz",
-                "eng": "eye color, darling"
+                "deu": "Traumjob, Schatz",
+                "eng": "Dream job, darling"
             }
         },
         "button": {
