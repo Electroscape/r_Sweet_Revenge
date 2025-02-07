@@ -97,10 +97,15 @@ def pw_check(event=0):
     global language
 
     
-    modified_password = re.sub("\.", "", input_password.get())
-    modified_password = modified_password.lower()  
-    valid_passwords = [pw.lower() for pw in config['general']['password']] 
-    if modified_password in valid_passwords:
+    
+    # Eingegebenes Passwort von Punkten befreien und kleinschreiben
+    modified_password = re.sub(r"\.", "", input_password.get()).lower()
+
+    # Liste der möglichen gültigen Passwörter ebenfalls in Kleinschreibung
+    valid_passwords = [pw.lower() for pw in config['general']['password']]
+
+    # Prüfen, ob eines der gültigen Passwörter als Teilstring vorkommt
+    if any(valid_pw in modified_password for valid_pw in valid_passwords):
         show_website()
     elif input_password.get() == config['general']['exit_password']:
         close()
