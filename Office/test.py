@@ -1,9 +1,12 @@
 # @author Martin Pek (martin.pek@web.de)
 
 import sys
+
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QStackedWidget
+    QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QStackedWidget, QDialog, QFrame, QLineEdit, QHBoxLayout
 )
+
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from time import sleep
@@ -27,18 +30,81 @@ class PageOne(QWidget):
 class PageTwo(QWidget):
     def __init__(self, switch_callback):
         super().__init__()
-        layout = QVBoxLayout()
-        label = QLabel("Page 2: Second Layer")
-        label.setAlignment(Qt.AlignCenter)
-        label.setStyleSheet("font-size: 30px;")
 
-        back_btn = QPushButton("Back")
-        back_btn.setStyleSheet("font-size: 20px; padding: 10px;")
-        back_btn.clicked.connect(switch_callback)
+        # Create a QDialog instance as a child of this widget
+        self.dialog = QDialog(self)
+        self.dialog.setWindowFlags(Qt.Widget)  # Make QDialog act like a normal widget
 
-        layout.addWidget(label)
-        layout.addWidget(back_btn)
+        self.setupUi(self.dialog)
+        self.loginBtn.clicked.connect(switch_callback)
+        self.center_dialog()
+
+        # Create a layout for PageTwo and add the dialog as a widget
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.dialog)
         self.setLayout(layout)
+
+    def center_dialog(self):
+        # Create layout to center dialog
+        outer_layout = QVBoxLayout(self)
+        outer_layout.setAlignment(Qt.AlignCenter)
+
+        outer_layout.addStretch()
+        inner_layout = QHBoxLayout()
+        inner_layout.addStretch()
+        inner_layout.addWidget(self.dialog)
+        inner_layout.addStretch()
+        outer_layout.addLayout(inner_layout)
+        outer_layout.addStretch()
+
+        self.setLayout(outer_layout)
+
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(500, 340)
+
+        self.loginBtn = QPushButton(Dialog)
+        self.loginBtn.setGeometry(QtCore.QRect(200, 220, 89, 25))
+        self.loginBtn.setObjectName("loginBtn")
+
+        self.pushButton = QPushButton(Dialog)
+        self.pushButton.setGeometry(QtCore.QRect(300, 220, 151, 25))
+        self.pushButton.setObjectName("pushButton")
+
+        self.frame = QFrame(Dialog)
+        self.frame.setGeometry(QtCore.QRect(320, 89, 111, 111))
+        self.frame.setFrameShape(QFrame.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Raised)
+        self.frame.setObjectName("frame")
+
+        self.lineEdit = QLineEdit(Dialog)
+        self.lineEdit.setGeometry(QtCore.QRect(100, 160, 191, 25))
+        self.lineEdit.setObjectName("lineEdit")
+
+        self.labelPassword = QLabel(Dialog)
+        self.labelPassword.setGeometry(QtCore.QRect(30, 160, 67, 20))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.labelPassword.setFont(font)
+        self.labelPassword.setObjectName("labelPassword")
+
+        self.labelName = QLabel(Dialog)
+        self.labelName.setGeometry(QtCore.QRect(30, 110, 180, 20))
+        self.labelName.setFont(font)
+        self.labelName.setObjectName("labelName")
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.loginBtn.setText(_translate("Dialog", "Login"))
+        self.pushButton.setText(_translate("Dialog", "Passwort vergessen?"))
+        self.labelPassword.setText(_translate("Dialog", "Passwort"))
+        self.labelName.setText(_translate("Dialog", "Name       Christine"))
+
+
 
 class PageFinal(QWidget):
     def __init__(self, display_image):
