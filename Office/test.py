@@ -10,6 +10,30 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from time import sleep
+from pathlib import Path
+
+import argparse
+
+argparser = argparse.ArgumentParser(
+    description='Christines Office')
+
+argparser.add_argument(
+    '-c',
+    '--city',
+    default='s',
+    help='name of the city: [hh / s]')
+
+
+
+root_path = Path(__file__).parent
+img_folder = root_path.joinpath(f"img/{argparser.parse_args().city}")
+if not img_folder.exists():
+    print(img_folder)
+    exit(f"invalid location argument, no image folder found {argparser.parse_args().city}")
+
+def get_img(name):
+    return str(img_folder.joinpath(name))
+
 
 class PageOne(QWidget):
     def __init__(self, switch_callback):
@@ -71,11 +95,15 @@ class PageTwo(QWidget):
         self.pushButton.setGeometry(QtCore.QRect(300, 220, 151, 25))
         self.pushButton.setObjectName("pushButton")
 
-        self.frame = QFrame(Dialog)
-        self.frame.setGeometry(QtCore.QRect(320, 89, 111, 111))
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
-        self.frame.setObjectName("frame")
+        self.imageLabel = QLabel(Dialog)
+        self.imageLabel.setGeometry(QtCore.QRect(320, 89, 111, 111))
+        self.imageLabel.setObjectName("polic_icon")
+
+        pixmap = QtGui.QPixmap(get_img("police.png"))
+        scaled_pixmap = pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.imageLabel.setPixmap(scaled_pixmap)
+        self.imageLabel.setAlignment(Qt.AlignCenter)
+
 
         self.lineEdit = QLineEdit(Dialog)
         self.lineEdit.setGeometry(QtCore.QRect(100, 160, 191, 25))
@@ -185,4 +213,5 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
+
 
