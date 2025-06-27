@@ -1,5 +1,11 @@
 # @author Martin Pek (martin.pek@web.de)
 
+'''
+ * password via cfg
+
+
+'''
+
 import sys
 
 from PyQt5 import QtCore, QtGui
@@ -94,9 +100,9 @@ class PageTwo(QWidget):
         self.loginBtn.setGeometry(QtCore.QRect(200, 220, 89, 25))
         self.loginBtn.setObjectName("loginBtn")
 
-        self.pushButton = QPushButton(Dialog)
-        self.pushButton.setGeometry(QtCore.QRect(300, 220, 151, 25))
-        self.pushButton.setObjectName("pushButton")
+        self.hintButton = QPushButton(Dialog)
+        self.hintButton.setGeometry(QtCore.QRect(300, 220, 151, 25))
+        self.hintButton.setObjectName("hintButton")
 
         self.imageLabel = QLabel(Dialog)
         self.imageLabel.setGeometry(QtCore.QRect(320, 89, 111, 111))
@@ -131,7 +137,7 @@ class PageTwo(QWidget):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.loginBtn.setText(_translate("Dialog", "Login"))
-        self.pushButton.setText(_translate("Dialog", "Passwort vergessen?"))
+        self.hintButton.setText(_translate("Dialog", "Passwort vergessen?"))
         self.labelPassword.setText(_translate("Dialog", "Passwort"))
         self.labelName.setText(_translate("Dialog", "Name       Christine"))
 
@@ -140,6 +146,7 @@ class PageTwo(QWidget):
         if entered == self.correct_password:
             self.switch_callback()
         else:
+            self.passwordForm.clear()
             self.passwordForm.setStyleSheet("border: 2px solid red;")
             self.passwordForm.setPlaceholderText("Falsches Passwort")
 
