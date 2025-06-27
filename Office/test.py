@@ -54,19 +54,21 @@ class PageOne(QWidget):
 class PageTwo(QWidget):
     def __init__(self, switch_callback):
         super().__init__()
+        self.setStyleSheet("background-color: white;")
 
-        # Create a QDialog instance as a child of this widget
+        self.correct_password = "admin123"  # ✅ Define your expected password
+        self.switch_callback = switch_callback
+
         self.dialog = QDialog(self)
-        self.dialog.setWindowFlags(Qt.Widget)  # Make QDialog act like a normal widget
-
+        self.dialog.setWindowFlags(Qt.Widget)
         self.setupUi(self.dialog)
-        self.loginBtn.clicked.connect(switch_callback)
+        self.loginBtn.clicked.connect(self.try_login)  # ✅ Changed to use try_login
         self.center_dialog()
 
-        # Create a layout for PageTwo and add the dialog as a widget
         layout = QVBoxLayout(self)
         layout.addWidget(self.dialog)
         self.setLayout(layout)
+
 
     def center_dialog(self):
         # Create layout to center dialog
@@ -87,6 +89,7 @@ class PageTwo(QWidget):
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 340)
 
+        self.setStyleSheet("background-color: white;")
         self.loginBtn = QPushButton(Dialog)
         self.loginBtn.setGeometry(QtCore.QRect(200, 220, 89, 25))
         self.loginBtn.setObjectName("loginBtn")
@@ -97,20 +100,20 @@ class PageTwo(QWidget):
 
         self.imageLabel = QLabel(Dialog)
         self.imageLabel.setGeometry(QtCore.QRect(320, 89, 111, 111))
-        self.imageLabel.setObjectName("polic_icon")
+        self.imageLabel.setObjectName("police_icon")
 
         pixmap = QtGui.QPixmap(get_img("police.png"))
         scaled_pixmap = pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.imageLabel.setPixmap(scaled_pixmap)
         self.imageLabel.setAlignment(Qt.AlignCenter)
 
-
-        self.lineEdit = QLineEdit(Dialog)
-        self.lineEdit.setGeometry(QtCore.QRect(100, 160, 191, 25))
-        self.lineEdit.setObjectName("lineEdit")
+        self.passwordForm = QLineEdit(Dialog)
+        self.passwordForm.setGeometry(QtCore.QRect(110, 160, 191, 25))
+        self.passwordForm.setObjectName("lineEdit")
+        self.passwordForm.returnPressed.connect(self.try_login)  # ✅ Add this line
 
         self.labelPassword = QLabel(Dialog)
-        self.labelPassword.setGeometry(QtCore.QRect(30, 160, 67, 20))
+        self.labelPassword.setGeometry(QtCore.QRect(30, 160, 75, 20))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.labelPassword.setFont(font)
@@ -131,6 +134,14 @@ class PageTwo(QWidget):
         self.pushButton.setText(_translate("Dialog", "Passwort vergessen?"))
         self.labelPassword.setText(_translate("Dialog", "Passwort"))
         self.labelName.setText(_translate("Dialog", "Name       Christine"))
+
+    def try_login(self):
+        entered = self.passwordForm.text()
+        if entered == self.correct_password:
+            self.switch_callback()
+        else:
+            self.passwordForm.setStyleSheet("border: 2px solid red;")
+            self.passwordForm.setPlaceholderText("Falsches Passwort")
 
 
 
