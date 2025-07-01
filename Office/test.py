@@ -17,6 +17,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from time import sleep
 from pathlib import Path
+import json
 
 import argparse
 
@@ -32,37 +33,86 @@ argparser.add_argument(
 
 
 root_path = Path(__file__).parent
-img_folder = root_path.joinpath(f"img/{argparser.parse_args().city}")
-if not img_folder.exists():
-    print(img_folder)
+img_folder_locale = root_path.joinpath(f"img/{argparser.parse_args().city}")
+img_folder_root = root_path.joinpath(f"img")
+if not img_folder_locale.exists():
+    print(img_folder_locale)
     exit(f"invalid location argument, no image folder found {argparser.parse_args().city}")
 
-def get_img(name):
-    return str(img_folder.joinpath(name))
+def get_img(name, ignore_locale=False):
+    if ignore_locale:
+        return  str(img_folder_root.joinpath(name))
+    return str(img_folder_locale.joinpath(name))
 
 
 class PageOne(QWidget):
     def __init__(self, switch_callback):
         super().__init__()
-        layout = QVBoxLayout()
-        label = QLabel("Page 1: Welcome")
-        label.setAlignment(Qt.AlignCenter)
-        label.setStyleSheet("font-size: 30px;")
-
-        next_btn = QPushButton("Next")
-        next_btn.setStyleSheet("font-size: 20px; padding: 10px;")
-        next_btn.clicked.connect(switch_callback)
-
-        layout.addWidget(label)
-        layout.addWidget(next_btn)
-        self.setLayout(layout)
-
-class PageTwo(QWidget):
-    def __init__(self, switch_callback):
-        super().__init__()
         self.setStyleSheet("background-color: white;")
 
-        self.correct_password = "admin123"  # ✅ Define your expected password
+        outer_layout = QVBoxLayout()
+        outer_layout.setAlignment(Qt.AlignCenter)
+
+        button_layout = QHBoxLayout()
+        button_layout.setSpacing(80)  # spacing between buttons
+
+        # Common button size
+        button_size = 200
+
+        # Button: DEU
+        btn_deu = QPushButton()
+        btn_deu.setIcon(QtGui.QIcon(get_img("deu.png", True)))
+        btn_deu.setIconSize(QtCore.QSize(button_size - 20, button_size - 20))
+        btn_deu.setFixedSize(button_size, button_size)
+        btn_deu.setStyleSheet("""
+            QPushButton {
+                border: 4px solid gray;
+                border-radius: %dpx;
+                background-color: white;
+            }
+            QPushButton:pressed {
+                background-color: #f0f0f0;
+            }
+        """ % (button_size // 2))
+
+        # Button: ENG
+        btn_eng = QPushButton()
+        btn_eng.setIcon(QtGui.QIcon(get_img("eng.png", True)))
+        btn_eng.setIconSize(QtCore.QSize(button_size - 20, button_size - 20))
+        btn_eng.setFixedSize(button_size, button_size)
+        btn_eng.setStyleSheet("""
+            QPushButton {
+                border: 4px solid gray;
+                border-radius: %dpx;
+                background-color: white;
+            }
+            QPushButton:pressed {
+                background-color: #f0f0f0;
+            }
+        """ % (button_size // 2))
+
+        btn_deu.clicked.connect(lambda: switch_callback("deu"))
+        btn_eng.clicked.connect(lambda: switch_callback("eng"))
+
+
+        button_layout.addWidget(btn_deu)
+        button_layout.addWidget(btn_eng)
+
+        outer_layout.addLayout(button_layout)
+        self.setLayout(outer_layout)
+
+
+
+
+
+class PageTwo(QWidget):
+    def __init__(self, switch_callback, lang, config):
+        super().__init__()
+        self.config = config
+        self.lang = lang
+        self.setStyleSheet("background-color: white;")
+
+        self.correct_password = config.get("password")  # ✅ Define your expected password
         self.switch_callback = switch_callback
 
         self.dialog = QDialog(self)
@@ -144,13 +194,15 @@ class PageTwo(QWidget):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.loginBtn.setText(_translate("Dialog", "Login"))
-        self.hintButton.setText(_translate("Dialog", "Passwort vergessen?"))
+        label = self.config.get("password_hint_label", {}).get(self.lang, "Password hint")
+        self.hintButton.setText(_translate("Dialog", label))
         self.labelPassword.setText(_translate("Dialog", "Passwort"))
         self.labelName.setText(_translate("Dialog", "Name       Christine"))
 
     def try_login(self):
         entered = self.passwordForm.text()
-        if entered == self.correct_password:
+
+        if entered.lower() in self.correct_password:
             self.switch_callback()
         else:
             self.passwordForm.clear()
@@ -200,13 +252,22 @@ class PageFinal(QWidget):
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        try:
+            with open('config.json', 'r', encoding='utf8') as config_file:
+                self.config = json.load(config_file)
+                lowercase_passwords = [p.strip().lower() for p in self.config["password"]]
+                self.config["password"] = lowercase_passwords
+        except FileNotFoundError:
+            exit("config not found, terminating")
+
+        self.language = "deu"
         # Remove window borders and go fullscreen
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.showFullScreen()
 
         self.stack = QStackedWidget()
-        self.page1 = PageOne(self.go_to_page2)
-        self.page2 = PageTwo(self.go_to_final)
+        self.page1 = PageOne(self.lang_select)
+        self.page2 = PageTwo(self.go_to_final, self.language, self.config)
         self.page_final = PageFinal("website_eng.png")
 
         self.stack.addWidget(self.page1)
@@ -217,8 +278,11 @@ class MainWindow(QWidget):
         layout.addWidget(self.stack)
         self.setLayout(layout)
 
-    def go_to_page2(self):
+    def lang_select(self, lang):
+        print(f"selected language {lang}")
+        self.language = lang
         self.stack.setCurrentIndex(1)
+
 
     def go_to_final(self):
         self.stack.setCurrentIndex(2)
@@ -227,7 +291,8 @@ class MainWindow(QWidget):
     def keyPressEvent(self, event):
         key = event.key()
         if ((Qt.Key_0 <= key <= Qt.Key_9) or
-            (Qt.Key_A <= key <= Qt.Key_Z)
+            (Qt.Key_A <= key <= Qt.Key_Z) or
+            Qt.Key_Shift == key
         ):
             print(f"Accepted key: {event.text()}")
         else:

@@ -1,61 +1,15 @@
 {
-    "general": {
-        "password": ["lektorin", "editor"],
-        "exit_password": "20162016",
-        "img_path": {
-            "all": "img/",
-            "hh": "img/hh/",
-            "st": "img/s/"
-        }
+    "password": ["lektorin", "editor"],
+    "password_hint_label": {
+        "deu": "Passwort Hinweiß",
+        "eng": "Password hint"
     },
-    "tkinter": {
-        "background-color": "#F2F2F2",
-        "tabpadx": 50
+    "password_hint_text": {
+        "deu": "Job, Schatz",
+        "eng": "job, darling"
     },
-    "text": {
-        "dropdown": {
-            "deu": "- Auswahl -",
-            "eng": "- select -"
-        },
-        "login": {
-            "username": {
-                "deu": "Name",
-                "eng": "Name"
-            },
-            "password": {
-                "deu": "Passwort",
-                "eng": "Password"
-            }
-        },
-        "password_wrong": {
-            "title": {
-                "deu": "Fehler",
-                "eng": "Error"
-            },
-            "text": {
-                "deu": "Falsches Passwort. Bitte erneut eingeben.",
-                "eng": "Wrong password. Please try again."
-            }
-        },
-        "password_hint": {
-            "title": {
-                "deu": "Hilfe",
-                "eng": "Help"
-            },
-            "text": {
-                "deu": "Job, Schatz",
-                "eng": "job, darling"
-            }
-        },
-        "button": {
-            "login": {
-                "deu": "Login",
-                "eng": "Login"
-            },
-            "pw_hint": {
-                "deu": "Passwort vergessen?",
-                "eng": "Forgot password?"
-            }
-        }
+    "password_wrong_text": {
+        "deu": "falsches Passwort",
+        "eng": "wrong password"
     }
 }
