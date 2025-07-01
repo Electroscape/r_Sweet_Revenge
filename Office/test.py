@@ -103,6 +103,13 @@ class PageTwo(QWidget):
         self.hintButton = QPushButton(Dialog)
         self.hintButton.setGeometry(QtCore.QRect(300, 220, 151, 25))
         self.hintButton.setObjectName("hintButton")
+        self.hintButton.clicked.connect(self.display_hint)
+
+        self.hintLabel = QLabel(Dialog)
+        self.hintLabel.setGeometry(QtCore.QRect(110, 190, 300, 25))  # Position below passwordForm
+        self.hintLabel.setStyleSheet("color: gray; font-style: italic;")
+        self.hintLabel.setText("")
+        self.hintLabel.hide()  # Hidden initially
 
         self.imageLabel = QLabel(Dialog)
         self.imageLabel.setGeometry(QtCore.QRect(320, 89, 111, 111))
@@ -150,6 +157,9 @@ class PageTwo(QWidget):
             self.passwordForm.setStyleSheet("border: 2px solid red;")
             self.passwordForm.setPlaceholderText("Falsches Passwort")
 
+    def display_hint(self):
+        self.hintLabel.setText("Tipp: Es ist der Name deiner Katze 🐱")  # or any hint you'd like
+        self.hintLabel.show()
 
 
 class PageFinal(QWidget):
