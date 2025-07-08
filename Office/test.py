@@ -44,6 +44,10 @@ def get_img(name, ignore_locale=False):
         return  str(img_folder_root.joinpath(name))
     return str(img_folder_locale.joinpath(name))
 
+def get_localized_cfg_entry(cfg, key, lang, default):
+    return cfg.get(key, {}).get(lang, default)
+
+
 
 class PageOne(QWidget):
     def __init__(self, switch_callback):
@@ -108,8 +112,9 @@ class PageOne(QWidget):
 class PageTwo(QWidget):
     def __init__(self, switch_callback, lang, config):
         super().__init__()
+        self.language = lang
         self.config = config
-        self.lang = lang
+        print(f"going page 2 with {self.language}")
         self.setStyleSheet("background-color: white;")
 
         self.correct_password = config.get("password")  # ✅ Define your expected password
@@ -191,10 +196,11 @@ class PageTwo(QWidget):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
+        print(f"langauge is {self.language}")
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.loginBtn.setText(_translate("Dialog", "Login"))
-        label = self.config.get("password_hint_label", {}).get(self.lang, "Password hint")
+        label = get_localized_cfg_entry(self.config, "password_hint_label", self.language, "Passwort Hinweiß")
         self.hintButton.setText(_translate("Dialog", label))
         self.labelPassword.setText(_translate("Dialog", "Passwort"))
         self.labelName.setText(_translate("Dialog", "Name       Christine"))
@@ -210,7 +216,7 @@ class PageTwo(QWidget):
             self.passwordForm.setPlaceholderText("Falsches Passwort")
 
     def display_hint(self):
-        self.hintLabel.setText("Tipp: Es ist der Name deiner Katze 🐱")  # or any hint you'd like
+        self.hintLabel.setText(get_localized_cfg_entry(self.config, "password_hint_text", self.language, "Job, Schatz"))  # or any hint you'd like
         self.hintLabel.show()
 
 
@@ -261,12 +267,14 @@ class MainWindow(QWidget):
             exit("config not found, terminating")
 
         self.language = "deu"
+        print("setting default language")
         # Remove window borders and go fullscreen
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.showFullScreen()
 
         self.stack = QStackedWidget()
         self.page1 = PageOne(self.lang_select)
+        print(f"going page 2 with {self.language}")
         self.page2 = PageTwo(self.go_to_final, self.language, self.config)
         self.page_final = PageFinal("website_eng.png")
 
@@ -281,6 +289,14 @@ class MainWindow(QWidget):
     def lang_select(self, lang):
         print(f"selected language {lang}")
         self.language = lang
+
+        # Remove the old PageTwo if already added
+        if self.stack.count() > 1:
+            self.stack.removeWidget(self.page2)
+            self.page2.deleteLater()
+
+        self.page2 = PageTwo(self.go_to_final, self.language, self.config)
+        self.stack.insertWidget(1, self.page2)
         self.stack.setCurrentIndex(1)
 
 
