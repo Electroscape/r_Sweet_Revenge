@@ -276,7 +276,9 @@ class MainWindow(QWidget):
         self.page1 = PageOne(self.lang_select)
         print(f"going page 2 with {self.language}")
         self.page2 = PageTwo(self.go_to_final, self.language, self.config)
-        self.page_final = PageFinal("website_eng.png")
+        website_file = get_img(f"website_{self.language}.png")
+        print(website_file)
+        self.page_final = PageFinal(website_file)
 
         self.stack.addWidget(self.page1)
         self.stack.addWidget(self.page2)
