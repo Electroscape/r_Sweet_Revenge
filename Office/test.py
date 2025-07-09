@@ -33,11 +33,13 @@ argparser.add_argument(
 
 
 root_path = Path(__file__).parent
-img_folder_locale = root_path.joinpath(f"img/{argparser.parse_args().city}")
+args = argparser.parse_args()
+city = args.city
+img_folder_locale = root_path.joinpath(f"img/{city}")
 img_folder_root = root_path.joinpath(f"img")
 if not img_folder_locale.exists():
     print(img_folder_locale)
-    exit(f"invalid location argument, no image folder found {argparser.parse_args().city}")
+    exit(f"invalid location argument, no image folder found {city}")
 
 def get_img(name, ignore_locale=False):
     if ignore_locale:
@@ -60,10 +62,8 @@ class PageOne(QWidget):
         button_layout = QHBoxLayout()
         button_layout.setSpacing(80)  # spacing between buttons
 
-        # Common button size
         button_size = 200
 
-        # Button: DEU
         btn_deu = QPushButton()
         btn_deu.setIcon(QtGui.QIcon(get_img("deu.png", True)))
         btn_deu.setIconSize(QtCore.QSize(button_size - 20, button_size - 20))
@@ -79,7 +79,6 @@ class PageOne(QWidget):
             }
         """ % (button_size // 2))
 
-        # Button: ENG
         btn_eng = QPushButton()
         btn_eng.setIcon(QtGui.QIcon(get_img("eng.png", True)))
         btn_eng.setIconSize(QtCore.QSize(button_size - 20, button_size - 20))

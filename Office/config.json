@@ -1,7 +1,7 @@
 {
     "password": ["lektorin", "editor"],
     "password_hint_label": {
-        "deu": "Passwort Hinweiß",
+        "deu": "Passwort Hinweis",
         "eng": "Password hint"
     },
     "password_hint_text": {
