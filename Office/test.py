@@ -304,19 +304,24 @@ class MainWindow(QWidget):
     def go_to_final(self):
         self.stack.setCurrentIndex(2)
 
-    # Override ESC key to prevent accidental exit
-    def keyPressEvent(self, event):
+    @staticmethod
+    def keypress_event(event):
         key = event.key()
-        if ((Qt.Key_0 <= key <= Qt.Key_9) or
-            (Qt.Key_A <= key <= Qt.Key_Z) or
-            Qt.Key_Shift == key
-        ):
+        modifiers = event.modifiers()
+
+        # Block Alt+Tab, Alt+F4, and Ctrl+Alt+Fx
+        if (modifiers & Qt.AltModifier and key in [Qt.Key_Tab, Qt.Key_F4]) or \
+                (modifiers & Qt.ControlModifier and modifiers & Qt.AltModifier):
+            print("Blocked system key combo")
+            return
+
+        # Allow alphanumerics
+        if (Qt.Key_0 <= key <= Qt.Key_9) or (Qt.Key_A <= key <= Qt.Key_Z) or key == Qt.Key_Shift:
             print(f"Accepted key: {event.text()}")
         else:
-            print(f"Ignored key: {key}")  # Optional: log for debugging
-            sleep(1)
-            exit("debug exit")
+            print(f"Ignored key: {key}")
             event.ignore()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
