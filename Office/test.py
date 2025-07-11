@@ -54,14 +54,21 @@ def get_localized_cfg_entry(cfg, key, lang, default):
 class PageOne(QWidget):
     def __init__(self, switch_callback):
         super().__init__()
-        self.setStyleSheet("background-color: white;")
+        self.switch_callback = switch_callback
 
-        outer_layout = QVBoxLayout()
-        outer_layout.setAlignment(Qt.AlignCenter)
+        screen_file = get_img("startscreen.png")
+        print(f"screen exists {Path(screen_file).exists()} {screen_file}")
+        self.bg_label = QLabel(self)
+        self.bg_pixmap = QPixmap(screen_file)
 
+        self.bg_label.setScaledContents(True)
+        self.bg_label.lower()  # Ensure it's behind other widgets
+
+        # Create the button layout
         button_layout = QHBoxLayout()
-        button_layout.setSpacing(80)  # spacing between buttons
-
+        button_layout.setSpacing(300)  # ← Reduce gap between buttons
+        button_layout.setContentsMargins(0, 0, 0, 0)  # ← Remove extra padding around layout
+        button_layout.setAlignment(Qt.AlignCenter)  # ← Make sure buttons stay centered
         button_size = 200
 
         btn_deu = QPushButton()
@@ -94,16 +101,33 @@ class PageOne(QWidget):
             }
         """ % (button_size // 2))
 
-        btn_deu.clicked.connect(lambda: switch_callback("deu"))
-        btn_eng.clicked.connect(lambda: switch_callback("eng"))
-
+        btn_deu.clicked.connect(lambda: self.switch_callback("deu"))
+        btn_eng.clicked.connect(lambda: self.switch_callback("eng"))
 
         button_layout.addWidget(btn_deu)
         button_layout.addWidget(btn_eng)
 
+        # Centered layout
+        outer_layout = QVBoxLayout()
+        # outer_layout.setAlignment(Qt.AlignCenter)
+        outer_layout = QVBoxLayout()
+        outer_layout.addStretch(3)  # Push content down
+
         outer_layout.addLayout(button_layout)
+
+        outer_layout.addStretch(1)  # Optional: push from below if you want center-ish control
         self.setLayout(outer_layout)
 
+
+    def resizeEvent(self, event):
+        if not self.bg_pixmap.isNull():
+            # Scale while preserving aspect ratio, crop to fill
+            scaled = self.bg_pixmap.scaled(
+                self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation
+            )
+            self.bg_label.setPixmap(scaled)
+            self.bg_label.resize(self.size())
+        super().resizeEvent(event)
 
 
 
