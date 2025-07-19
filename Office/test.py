@@ -225,7 +225,11 @@ class PageTwo(QWidget):
         self.loginBtn.setText(_translate("Dialog", "Login"))
         label = get_localized_cfg_entry(self.config, "password_hint_label", self.language, "Passwort Hinweiß")
         self.hintButton.setText(_translate("Dialog", label))
-        self.labelPassword.setText(_translate("Dialog", "Passwort"))
+        if self.language != "eng":
+            self.labelPassword.setText(_translate("Dialog", "Passwort"))
+        else:
+            self.labelPassword.setText(_translate("Dialog", "Password"))
+
         self.labelName.setText(_translate("Dialog", "Name       Christine"))
 
     def try_login(self):
