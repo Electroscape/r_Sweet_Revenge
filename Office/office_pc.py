@@ -328,6 +328,11 @@ class MainWindow(QWidget):
         self.stack.insertWidget(1, self.page2)
         self.stack.setCurrentIndex(1)
 
+        website_file = get_img(f"website_{self.language}.png")
+        print(website_file)
+        self.page_final = PageFinal(website_file)
+        self.stack.insertWidget(2, self.page_final)
+
 
     def go_to_final(self):
         self.stack.setCurrentIndex(2)
