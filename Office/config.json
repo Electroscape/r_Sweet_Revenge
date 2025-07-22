@@ -1,0 +1,15 @@
+{
+    "password": ["lektorin", "editor"],
+    "password_hint_label": {
+        "deu": "Passwort Hinweis",
+        "eng": "Password hint"
+    },
+    "password_hint_text": {
+        "deu": "Job, Schatz",
+        "eng": "job, darling"
+    },
+    "password_wrong_text": {
+        "deu": "falsches Passwort",
+        "eng": "wrong password"
+    }
+}
